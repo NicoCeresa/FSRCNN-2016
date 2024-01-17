@@ -38,7 +38,7 @@ class Train():
         Trains one batch of images and returns the loss
         """
         # Initialize training loss
-        train_loss = 0
+        train_loss, train_psnr = 0, 0
         
         model.train()
             
@@ -53,6 +53,10 @@ class Train():
             loss = loss_fn(train_pred, y)
             train_loss += loss
             
+            # Calculate PSNR
+            psnr = calc_psnr(y, train_pred)
+            train_psnr += psnr
+            
             # Optimizer zero grad
             optimizer.zero_grad()
             
@@ -61,8 +65,8 @@ class Train():
             
             # Optimizer Step
             optimizer.step()
-            
-        return train_loss
+                    
+        return train_loss, train_psnr
                 
         
     def test_step(self, 
@@ -99,22 +103,28 @@ class Train():
         test_loss /= len(test_dataloader)
         test_psnr /= len(test_dataloader)
         
-        return test_loss
+        return test_loss, test_psnr
+                
                 
     def train(self):
         
         results = {'train_loss': [],
-                'test_loss': []}
+                'test_loss': [],
+                'train_psnr':[],
+                'test_psnr':[]}
+        
         print("Training...")
         for epoch in tqdm(range(epochs)):
-            train_loss = Test.train_step()
+            train_loss, train_psnr = Test.train_step()
             
-            test_loss = Test.test_step()
+            test_loss, test_psnr = Test.test_step()
             
             results['train_loss'].append(train_loss)
             results['test_loss'].append(test_loss)
+            results['train_psnr'].append(train_psnr)
+            results['test_psnr'].append(test_psnr)
             
-            print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f}")
+            print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} | Train PSNR: {train_psnr:.4f} || Test Loss: {test_loss:.4f} | Test PSNR: {test_psnr}")
             
         return results
 
