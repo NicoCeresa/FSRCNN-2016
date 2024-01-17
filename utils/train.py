@@ -1,5 +1,12 @@
-import model, dataset, helpers
+import helpers
+from model import FSRCNN
+from dataset import TrainDIV2K, EvalDIV2K
 from tqdm.auto import tqdm
+from torch.utils.data import DataLoader
+import torch.optim as optim
+import torch
+from torch import nn
+
 
 class Train():
     
@@ -69,7 +76,7 @@ class Train():
         model.eval()
         
         # Initialize test loss
-        test_loss = 0
+        test_loss, test_psnr = 0, 0
         
         # Put in inference mode
         with torch.inference_mode():
@@ -85,7 +92,12 @@ class Train():
                 loss = loss_fn(test_pred, y)
                 test_loss += loss
                 
+                # Calculate PSNR
+                psnr = calc_psnr(y, test_pred)
+                test_psnr += psnr
+                
         test_loss /= len(test_dataloader)
+        test_psnr /= len(test_dataloader)
         
         return test_loss
                 
@@ -93,7 +105,7 @@ class Train():
         
         results = {'train_loss': [],
                 'test_loss': []}
-        
+        print("Training...")
         for epoch in tqdm(range(epochs)):
             train_loss = Test.train_step()
             
@@ -102,13 +114,18 @@ class Train():
             results['train_loss'].append(train_loss)
             results['test_loss'].append(test_loss)
             
-            print(f"Epoch: {epoch}  || Train Loss: {train_loss} || Test Loss: {test_loss}")
-            
+            print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f}")
             
         return results
 
 
 if __name__ == '__main__':
+    EPOCHS = 1
+    BATCH_SIZE = 5
+    SCALE = 2
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    # NUM_WORKERS = os.cpu_count()
+
     project_directory = Path('G:/Projects/FSRCNN-2016/')
 
     zip_data_path = Path(os.path.join(project_directory, 'zips'))
@@ -119,10 +136,12 @@ if __name__ == '__main__':
 
     valid_zip_path = Path(os.path.join(zip_data_path, 'DIV2K_valid_HR.zip'))
     valid_image_path = Path(os.path.join(image_data_path, 'valid_images'))
-
+    
+    # Unzip images to location in env
     unzip(train_zip_path, train_image_path)
     unzip(valid_zip_path, valid_image_path)
     
+    # Put Augmented (rotated and scaled) images in diff folder
     augmented_image_path = Path(os.path.join(project_directory, 'augmented_images'))
     if augmented_image_path.is_dir():
             print(f"{augmented_image_path} already exists")
@@ -141,17 +160,14 @@ if __name__ == '__main__':
     augmented_image_path_train = Path(os.path.join(augmented_image_path, 'train'))
     augmented_image_path_valid = Path(os.path.join(augmented_image_path, 'valid'))  
     
-    
-    # DataLoader
+    # Initialize Dataset
     train_data_custom = TrainDIV2K(dir_path=augmented_image_path_train,
-                                scale=2)
+                                scale=SCALE)
 
     valid_data_custom = EvalDIV2K(dir_path=augmented_image_path_valid,
-                                scale=2)
+                                scale=SCALE)
     
-    BATCH_SIZE = 1
-    # NUM_WORKERS = os.cpu_count()
-
+    # Create DataLoaders
     train_dataloader_custom = DataLoader(dataset=train_data_custom,
                                         batch_size=BATCH_SIZE,
                                         #  num_workers=NUM_WORKERS,
@@ -163,7 +179,7 @@ if __name__ == '__main__':
                                         #  num_workers=NUM_WORKERS,
                                         shuffle=False)
     
-    model_0 = FSRCNN(scale=2)
+    model_0 = FSRCNN(scale=SCALE).to(device)
     
     optimizer = torch.optim.SGD(params=model_0.parameters(),
                      lr=1e-3)
@@ -175,5 +191,5 @@ if __name__ == '__main__':
         test_dataloader=valid_dataloader_custom,
         optimizer=optimizer,
         loss_fn=loss_fn,
-        epochs=1,
+        epochs=EPOCHS,
         device=device).train()

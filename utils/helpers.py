@@ -97,3 +97,7 @@ def plot_transformation(idx, data, n=3):
         ax[1].imshow(images[0].squeeze(0))
         ax[1].set_title(f"Downsampled")
         ax[1].axis(False)
+        
+        
+def calc_psnr(img1, img2):
+    return 10. * torch.log10(1. / torch.mean((img1 - img2) ** 2))
