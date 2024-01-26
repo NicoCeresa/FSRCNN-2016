@@ -20,16 +20,16 @@
 
 ## File Overview
 **notebooks**
-    - sandbox.ipynb <br/>
-        - Jupyter notebook that contains everything in one place from ingestion to predictions. This is what I used as a rough draft before restructuring into `.py` files
+- sandbox.ipynb <br/>
+    - Jupyter notebook that contains everything in one place from ingestion to predictions. This is what I used as a rough draft before restructuring into `.py` files
 
 **utils**
-    - helpers.py <br/>
-        - Python file containing helper functions I either created or found to assist with this project. <br/>
-    - dataset.py <br/>
-        - Python file containing the custom datasets needed to train this model. Includes the Train and Evaluation datasets as they require different things to function as needed.<br/>
-    - model.py<br/>
-        - Python file that contains the model consisting of layers for feature extraction, shrinking, non-linear mapping, expanding, and deconvolution. Uses PReLU instead of ReLU as it is more stable and avoids 'dead features' caused by zero_grad.<br/>
+- helpers.py <br/>
+    - Python file containing helper functions I either created or found to assist with this project. <br/>
+- dataset.py <br/>
+    - Python file containing the custom datasets needed to train this model. Includes the Train and Evaluation datasets as they require different things to function as needed.<br/>
+- model.py<br/>
+    - Python file that contains the model consisting of layers for feature extraction, shrinking, non-linear mapping, expanding, and deconvolution. Uses PReLU instead of ReLU as it is more stable and avoids 'dead features' caused by zero_grad.<br/>
 
 - train.py<br/>
     - Python file that trains the model using methods train_step, test_step, and train. Evaluates the model using Peak Signal-to-Noise Ratio(PSNR) measured in db. 
