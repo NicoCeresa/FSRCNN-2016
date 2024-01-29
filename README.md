@@ -17,7 +17,12 @@
 8. glob
 9. zipfile
 
-## 
+## Model Architecture
+
+**Structure:** Conv(5, d, 1) −> PReLU −> Conv(1, s, d) −> PReLU −> m×Conv(3, s, s) −> PReLU −> Conv(1, d, s) −> PReLU −> DeConv(9, 1, d)
+
+<img width="401" alt="Screen Shot 2024-01-29 at 12 59 33 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/63e082ae-cb7e-4c71-95ff-4b2cee70ce3e">
+
 
 
 ## Performance
