@@ -35,7 +35,7 @@
     <tr>
         <td><center>Original</center></td>
         <td><center>BICUBIC x3</center></td>
-        <td><center>FSRCNN x3 (34.66 dB)</center></td>
+        <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
     	<td>
@@ -51,7 +51,7 @@
     <tr>
         <td><center>Original</center></td>
         <td><center>BICUBIC x3</center></td>
-        <td><center>FSRCNN x3 (28.55 dB)</center></td>
+        <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
     	<td>
