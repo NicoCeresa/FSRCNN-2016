@@ -31,6 +31,40 @@
 <br/>
 <img width="393" alt="Screen Shot 2024-01-29 at 12 58 01 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/f622bad8-833b-47b7-aa92-4b104e008a20">
 
+<table>
+    <tr>
+        <td><center>Original</center></td>
+        <td><center>BICUBIC x3</center></td>
+        <td><center>FSRCNN x3 (34.66 dB)</center></td>
+    </tr>
+    <tr>
+    	<td>
+    		<center><img src="./data/lenna.bmp""></center>
+    	</td>
+    	<td>
+    		<center><img src="./data/lenna_bicubic_x3.bmp"></center>
+    	</td>
+    	<td>
+    		<center><img src="./data/lenna_fsrcnn_x3.bmp"></center>
+    	</td>
+    </tr>
+    <tr>
+        <td><center>Original</center></td>
+        <td><center>BICUBIC x3</center></td>
+        <td><center>FSRCNN x3 (28.55 dB)</center></td>
+    </tr>
+    <tr>
+    	<td>
+    		<center><img src="./data/butterfly_GT.bmp""></center>
+    	</td>
+    	<td>
+    		<center><img src="./data/butterfly_GT_bicubic_x3.bmp"></center>
+    	</td>
+    	<td>
+    		<center><img src="./data/butterfly_GT_fsrcnn_x3.bmp"></center>
+    	</td>
+    </tr>
+</table>
 
 ## File Overview
 **notebooks**
