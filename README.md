@@ -17,6 +17,54 @@
 8. glob
 9. zipfile
 
+## Model Architecture
+
+**Structure:** Conv(5, d, 1) −> PReLU −> Conv(1, s, d) −> PReLU −> m×Conv(3, s, s) −> PReLU −> Conv(1, d, s) −> PReLU −> DeConv(9, 1, d)
+
+<img width="401" alt="Screen Shot 2024-01-29 at 12 59 33 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/63e082ae-cb7e-4c71-95ff-4b2cee70ce3e">
+
+
+
+## Performance
+
+<img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
+<br/>
+<img width="393" alt="Screen Shot 2024-01-29 at 12 58 01 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/f622bad8-833b-47b7-aa92-4b104e008a20">
+
+<table>
+    <tr>
+        <td><center>Original</center></td>
+        <td><center>BICUBIC x3</center></td>
+        <td><center>FSRCNN x3</center></td>
+    </tr>
+    <tr>
+    	<td>
+    		<center><img src="./images/lenna.bmp""></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/lenna_bicubic_x3.bmp"></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/lenna_fsrcnn_x3.bmp"></center>
+    	</td>
+    </tr>
+    <tr>
+        <td><center>Original</center></td>
+        <td><center>BICUBIC x3</center></td>
+        <td><center>FSRCNN x3</center></td>
+    </tr>
+    <tr>
+    	<td>
+    		<center><img src="./images/butterfly_GT.bmp""></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/butterfly_GT_bicubic_x3.bmp"></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/butterfly_GT_fsrcnn_x3.bmp"></center>
+    	</td>
+    </tr>
+</table>
 
 ## File Overview
 **notebooks**
