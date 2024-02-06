@@ -115,9 +115,9 @@ class Train():
         
         print("Training...")
         for epoch in tqdm(range(epochs)):
-            train_loss, train_psnr = Test.train_step()
+            train_loss, train_psnr = Train.train_step()
             
-            test_loss, test_psnr = Test.test_step()
+            test_loss, test_psnr = Train.test_step()
             
             results['train_loss'].append(train_loss)
             results['test_loss'].append(test_loss)
@@ -131,10 +131,11 @@ class Train():
 
 if __name__ == '__main__':
     EPOCHS = 1
-    BATCH_SIZE = 5
+    BATCH_SIZE = 1
     SCALE = 2
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # NUM_WORKERS = os.cpu_count()
+    augmented_image_path = 'augmented_images'
     
     augmented_image_path_train = Path(os.path.join(augmented_image_path, 'train'))
     augmented_image_path_valid = Path(os.path.join(augmented_image_path, 'valid'))  
@@ -150,13 +151,15 @@ if __name__ == '__main__':
     train_dataloader_custom = DataLoader(dataset=train_data_custom,
                                         batch_size=BATCH_SIZE,
                                         #  num_workers=NUM_WORKERS,
-                                        shuffle=True
+                                        shuffle=True,
+                                        pin_memory=True
                                         )
 
     valid_dataloader_custom = DataLoader(dataset=valid_data_custom,
                                         batch_size=BATCH_SIZE,
                                         #  num_workers=NUM_WORKERS,
-                                        shuffle=False)
+                                        shuffle=False,
+                                        pin_memory=True)
     
     model = FSRCNN(scale=SCALE).to(device)
     
