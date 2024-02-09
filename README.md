@@ -26,6 +26,7 @@
 
 
 ## Performance
+** Achieved a training loss of 0.02124 and a test loss of 1.32693e-06** <br/>
 
 <img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
 <br/>
