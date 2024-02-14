@@ -1,5 +1,7 @@
 import os
+import cv2
 import torch
+import numpy as np
 from torch import nn
 from pathlib import Path
 from models import FSRCNN
@@ -8,8 +10,6 @@ import torch.optim as optim
 from helpers import calc_psnr
 from datasets import TrainDIV2K, EvalDIV2K
 from torch.utils.data import DataLoader
-
-DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 if __name__ == '__main__':
     SCALE = 2
@@ -45,9 +45,6 @@ if __name__ == '__main__':
                      lr=1e-3)
     loss_fn = nn.MSELoss()
     
-    """
-    Trains one batch of images and returns the loss
-    """
     # Initialize training loss
     train_loss = 0
   
@@ -55,7 +52,7 @@ if __name__ == '__main__':
                 'test_loss': []}
 
     for epoch in tqdm(range(EPOCHS)):
-        print(f"Training epoch {epoch}")
+        print(f"\nTraining epoch {epoch}")
         model.train()
         
         for batch, (X, y) in enumerate(train_dataloader_custom):
@@ -78,7 +75,7 @@ if __name__ == '__main__':
             # Optimizer Step
             optimizer.step()
             
-        train_loss /= len(train_dataloader)
+        train_loss /= len(train_dataloader_custom)
         results['train_loss'].append(train_loss)
         
         model.eval()
@@ -100,13 +97,13 @@ if __name__ == '__main__':
                 test_loss += loss.item()
                 
                 # Calculate PSNR
-                psnr = calc_psnr(test_pred.cpu(), y.cpu())
+                psnr = cv2.PSNR(test_pred.cpu(), y.cpu())
                 psnr_list.append(psnr)
                 
-            test_loss /= len(dataloader)
+            test_loss /= len(valid_dataloader_custom)
             results['test_loss'].append(test_loss)
         
-        print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f}")
+        print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f} || AVG PSNR: {np.mean(psnr_list):.4f}")
     
     # Save Model
     MODEL_PATH = Path("models")
@@ -122,23 +119,3 @@ if __name__ == '__main__':
     print(f"Saving model to {MODEL_SAVE_PATH}")
     torch.save(obj=model.state_dict(),
             f= MODEL_SAVE_PATH)
-
-    # Load in save state_dict
-    # loaded_model = FSRCNN(scale=SCALE).to(DEVICE)
-    # loaded_model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
-    # loaded_model.to(DEVICE)
-    
-    # psnr_list = []
-
-    # # Calculate PSNR
-    # for idx, (X, y) in tqdm(enumerate(eval_dataloader_custom)):
-    #     X = X.to(DEVICE)
-        
-    #     with torch.inference_mode():
-    #         pred = loaded_model(X)
-        
-    #     psnr = calc_psnr(pred.cpu(), y.cpu())
-        
-    #     psnr_list.append(psnr)
-
-    # print(f'Avg PSNR: {np.mean(psnr_list):.4f}\nMax PSNR: {np.max(psnr_list)}')
