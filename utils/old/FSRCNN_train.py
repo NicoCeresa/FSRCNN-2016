@@ -1,11 +1,15 @@
+import os
 import torch
 from torch import nn
-from FSRCNN_model import FSRCNN
+from pathlib import Path
+from model_2 import FSRCNN
 from tqdm.auto import tqdm
 import torch.optim as optim
-from helpers import calc_psnr
-from FSRCNN_dataset import TrainDIV2K, EvalDIV2K
+from FSRCNN_helpers import calc_psnr
+from dataset_2 import TrainDIV2K, EvalDIV2K
 from torch.utils.data import DataLoader
+
+DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 class Train():
     
@@ -16,7 +20,7 @@ class Train():
                  optimizer: torch.optim.Optimizer,
                  loss_fn: torch.nn.Module,
                  epochs: int,
-                 device=device):
+                 device=DEVICE):
         
         self.model = model
         self.train_dataloader = train_dataloader
@@ -26,25 +30,33 @@ class Train():
         self.epochs = epochs
         self.device=device
 
-    def train_step(model: torch.nn.Module,
-               dataloader: torch.utils.data.DataLoader,
-               loss_fn: torch.nn.Module,
-               optimizer: torch.optim.Optimizer,
-               device=device):
+
+    def train_step(self
+        # model: torch.nn.Module,
+        # dataloader: torch.utils.data.DataLoader,
+        # loss_fn: torch.nn.Module,
+        # optimizer: torch.optim.Optimizer,
+        # device=DEVICE
+               ):
         """
         Trains one batch of images and returns the loss
         """
         # Initialize training loss
         train_loss = 0
 
+        model = self.model
+        train_dataloader = self.train_dataloader
+        optimizer = self.optimizer
+        loss_fn = self.loss_fn
+        
         model.train()
             
-        for batch, (X, y) in enumerate(dataloader):
+        for batch, (X, y) in enumerate(train_dataloader):
             # Put on correct device
-            X, y = X.to(device), y.to(device)
+            X, y = X.to(self.device), y.to(self.device)
             
             # Forward Pass
-            train_pred = model(X)
+            train_pred = self.model(X)
             
             # Calculate Loss
             loss = loss_fn(train_pred, y)
@@ -62,10 +74,12 @@ class Train():
         return train_loss
                     
         
-    def test_step(model: torch.nn.Module,
-              dataloader: torch.utils.data.DataLoader,
-              loss_fn: torch.nn.Module,
-              device=device):
+    def test_step(self
+        # model: torch.nn.Module,
+        # dataloader: torch.utils.data.DataLoader,
+        # loss_fn: torch.nn.Module,
+        # device=DEVICE
+        ):
     
         # Put in eval mode
         model.eval()
@@ -92,32 +106,35 @@ class Train():
         return test_loss
                 
                 
-    def train(model: torch.nn.Module,
-          train_dataloader: torch.utils.data.DataLoader,
-          test_dataloader: torch.utils.data.DataLoader,
-          optimizer: torch.optim.Optimizer,
-          loss_fn: torch.nn.Module,
-          epochs: int,
-          device=device):
+    def train(self
+        # model: torch.nn.Module,
+        # train_dataloader: torch.utils.data.DataLoader,
+        # test_dataloader: torch.utils.data.DataLoader,
+        # optimizer: torch.optim.Optimizer,
+        # loss_fn: torch.nn.Module,
+        # epochs: int
+        # device=DEVICE
+          ):
     
         results = {'train_loss': [],
                   'test_loss': []}
 
-        for epoch in tqdm(range(epochs)):
+        for epoch in tqdm(range(self.epochs)):
             print(f"Training epoch {epoch}")
-            train_loss = train_step(
-                    model=model,
-                    dataloader=train_dataloader,
-                    loss_fn=loss_fn,
-                    optimizer=optimizer,
-                    device=device
-            )
+            train_loss = Train(
+                            model=self.model,
+                            train_dataloader=self.train_dataloader,
+                            test_dataloader=self.test_dataloader,
+                            optimizer=self.optimizer,
+                            loss_fn=self.loss_fn,
+                            epochs=self.epochs,
+                            device=DEVICE).train_step()
             
             test_loss = test_step(
-                    model=model,
-                    dataloader=test_dataloader,
-                    loss_fn=loss_fn,
-                    device=device
+                    model=self.model,
+                    dataloader=self.test_dataloader,
+                    loss_fn=self.loss_fn,
+                    device=self.device
             )
             
             results['train_loss'].append(train_loss)
@@ -132,8 +149,14 @@ if __name__ == '__main__':
     SCALE = 2
     EPOCHS = 1
     BATCH_SIZE = 5
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    PROJECT_PATH = 'G:/Projects/FSRCNN-2016/'
     
+    project_directory = Path(PROJECT_PATH)
+    augmented_image_path = Path(os.path.join(project_directory, 'augmented_images'))
+    augmented_image_path_train = Path(os.path.join(augmented_image_path, 'train'))
+    augmented_image_path_valid = Path(os.path.join(augmented_image_path, 'valid'))
+        
     # Initialize Dataset
     train_data_custom = TrainDIV2K(dir_path=augmented_image_path_train,
                                 scale=SCALE)
@@ -151,7 +174,7 @@ if __name__ == '__main__':
                                         batch_size=BATCH_SIZE,
                                         shuffle=False)
     
-    model = FSRCNN(scale=SCALE).to(device)
+    model = FSRCNN(scale=SCALE).to(DEVICE)
     optimizer = torch.optim.SGD(params=model.parameters(),
                      lr=1e-3)
     loss_fn = nn.MSELoss()
@@ -162,7 +185,7 @@ if __name__ == '__main__':
         optimizer=optimizer,
         loss_fn=loss_fn,
         epochs=EPOCHS,
-        device=device).train()
+        device=DEVICE).train()
     
     # Save Model
     MODEL_PATH = Path("models")
@@ -180,15 +203,15 @@ if __name__ == '__main__':
             f= MODEL_SAVE_PATH)
 
     # Load in save state_dict
-    loaded_model = FSRCNN(scale=SCALE)
+    loaded_model = FSRCNN(scale=SCALE).to(DEVICE)
     loaded_model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
-    loaded_model.to(device)
+    loaded_model.to(DEVICE)
     
     psnr_list = []
 
     # Calculate PSNR
     for idx, (X, y) in tqdm(enumerate(eval_dataloader_custom)):
-        X = X.to(device)
+        X = X.to(DEVICE)
         
         with torch.inference_mode():
             pred = loaded_model(X)
