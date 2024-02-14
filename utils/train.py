@@ -2,11 +2,11 @@ import os
 import torch
 from torch import nn
 from pathlib import Path
-from model_2 import FSRCNN
+from models import FSRCNN
 from tqdm.auto import tqdm
 import torch.optim as optim
-from FSRCNN_helpers import calc_psnr
-from dataset_2 import TrainDIV2K, EvalDIV2K
+from helpers import calc_psnr
+from datasets import TrainDIV2K, EvalDIV2K
 from torch.utils.data import DataLoader
 
 DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
