@@ -1,4 +1,15 @@
 # Miscellanious Helper Fxns
+import os
+import cv2
+import h5py
+import torch
+import numpy as np
+from glob import glob
+from PIL import Image
+from pathlib import Path
+from zipfile import ZipFile
+import matplotlib.pyplot as plt
+
 
 def unzip(zip_path, image_path):
     """unzips
@@ -25,12 +36,6 @@ def walk_through_dir(dir_path):
     for dirpath, dirnames, filenames in os.walk(dir_path):
         print(f"There are {len(dirnames)} directories and {len(filenames)} images in {dirpath}")
 
-
-import h5py
-import numpy as np
-from pathlib import Path
-import cv2
-from glob import glob
 
 
 def augment_images(in_path, out_path, subclass):
@@ -100,4 +105,4 @@ def plot_transformation(idx, data, n=3):
         
         
 def calc_psnr(img1, img2):
-    return 10. * torch.log10(1. / torch.mean((img1 - img2) ** 2))
+    return 20. * torch.log10(1. / torch.mean((img1 - img2) ** 2))
