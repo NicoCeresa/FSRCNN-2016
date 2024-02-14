@@ -105,4 +105,11 @@ def plot_transformation(idx, data, n=3):
         
         
 def calc_psnr(img1, img2):
-    return 20. * torch.log10(1. / torch.mean((img1 - img2) ** 2))
+    diff = np.subtract(img1, img2)
+    # Get the square of the difference
+    squared_diff = diff**2
+    # Compute the mean squared error
+    mse = np.mean(squared_diff)
+    max_value = 1
+    psnr = 10 * np.log10(max_value/mse)
+    return psnr
