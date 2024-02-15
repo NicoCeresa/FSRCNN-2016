@@ -97,25 +97,10 @@ if __name__ == '__main__':
                 test_loss += loss.item()
                 
                 # Calculate PSNR
-                psnr = cv2.PSNR(test_pred.cpu(), y.cpu())
+                psnr = calc_psnr(test_pred.cpu().numpy(), y.cpu().numpy())
                 psnr_list.append(psnr)
                 
             test_loss /= len(valid_dataloader_custom)
             results['test_loss'].append(test_loss)
         
         print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f} || AVG PSNR: {np.mean(psnr_list):.4f}")
-    
-    # Save Model
-    MODEL_PATH = Path("models")
-    if MODEL_PATH.is_dir():
-            print(f"{augmented_image_path} already exists")
-    else:
-        MODEL_PATH.mkdir(parents=True,
-                    exist_ok=True)
-        
-    MODEL_NAME = f'FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pth'
-    MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
-
-    print(f"Saving model to {MODEL_SAVE_PATH}")
-    torch.save(obj=model.state_dict(),
-            f= MODEL_SAVE_PATH)
