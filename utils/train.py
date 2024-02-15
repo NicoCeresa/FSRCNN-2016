@@ -1,6 +1,7 @@
 import os
 import cv2
 import torch
+import pickle
 import numpy as np
 from torch import nn
 from pathlib import Path
@@ -10,6 +11,8 @@ import torch.optim as optim
 from helpers import calc_psnr
 from datasets import TrainDIV2K, EvalDIV2K
 from torch.utils.data import DataLoader
+
+
 
 if __name__ == '__main__':
     SCALE = 2
@@ -104,3 +107,25 @@ if __name__ == '__main__':
             results['test_loss'].append(test_loss)
         
         print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f} || AVG PSNR: {np.mean(psnr_list):.4f}")
+
+    # Pickle it
+    with open(f'models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'wb') as f:
+        pickle.dump(model, f)
+    
+    with open(f'models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'rb') as f:
+        pickle.load(f)
+    
+    # Save Model
+    MODEL_PATH = Path("models")
+    if MODEL_PATH.is_dir():
+            print(f"{MODEL_PATH} already exists")
+    else:
+        MODEL_PATH.mkdir(parents=True,
+                    exist_ok=True)
+        
+    MODEL_NAME = f'FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pth'
+    MODEL_SAVE_PATH = MODEL_PATH / MODEL_NAME
+
+    print(f"Saving model to {MODEL_SAVE_PATH}")
+    torch.save(obj=model.state_dict(),
+            f= MODEL_SAVE_PATH)
