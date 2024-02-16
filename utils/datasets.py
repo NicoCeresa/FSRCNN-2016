@@ -11,7 +11,7 @@ from PIL import Image
 
 class TrainDIV2K(Dataset):
     
-    def __init__(self, dir_path:str, scale:int):
+    def __init__(self, dir_path:str, scale=3):
         super().__init__()
         # get images from a path
         self.paths = list(pathlib.Path(dir_path).glob(f"*.png"))
@@ -27,13 +27,13 @@ class TrainDIV2K(Dataset):
         train_img_transform = v2.Compose([
             v2.ToPILImage(),
             v2.Resize(size=((int(im_height//self.scale)), (int(im_width//self.scale))), interpolation=InterpolationMode.BICUBIC),
-            v2.Grayscale(num_output_channels=1),
-            v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])])
+            # v2.Grayscale(num_output_channels=1),
+            v2.Compose([v2.ToImage(), v2.ToDtype(torch.int8, scale=True)])])
         
         hr_img_transform = v2.Compose([
-            v2.Grayscale(num_output_channels=1),
+            # v2.Grayscale(num_output_channels=1),
             v2.Resize(size=(im_height, im_width), interpolation=InterpolationMode.BICUBIC),
-            v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+            v2.Compose([v2.ToImage(), v2.ToDtype(torch.int8, scale=True)])
         ])
         
         return train_img_transform(image), hr_img_transform(image)
@@ -58,7 +58,7 @@ class TrainDIV2K(Dataset):
 
 class EvalDIV2K(Dataset):
     
-    def __init__(self, dir_path:str, scale:int):
+    def __init__(self, dir_path:str, scale=3):
         super().__init__()
         # get images from a path
         self.paths = list(pathlib.Path(dir_path).glob(f"*.png"))
@@ -74,14 +74,14 @@ class EvalDIV2K(Dataset):
         test_img_transform = v2.Compose([
             v2.ToPILImage(),
             v2.Resize(size=((int(im_height//self.scale)), (int(im_width//self.scale))), interpolation=InterpolationMode.BICUBIC),
-            v2.Grayscale(num_output_channels=1),
-            v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]),
+            # v2.Grayscale(num_output_channels=1),
+            v2.Compose([v2.ToImage(), v2.ToDtype(torch.int8, scale=True)]),
         ])
         
         hr_img_transform = v2.Compose([
-            v2.Grayscale(num_output_channels=1),
+            # v2.Grayscale(num_output_channels=1),
             v2.Resize(size=(im_height, im_width), interpolation=InterpolationMode.BICUBIC),
-            v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+            v2.Compose([v2.ToImage(), v2.ToDtype(torch.int8, scale=True)])
         ])
         
         return test_img_transform(image), hr_img_transform(image)
@@ -102,7 +102,8 @@ class EvalDIV2K(Dataset):
         img = self.load_image(idx)
         LR, HR = self.test_transform(img)
         return torch.Tensor(np.expand_dims(LR / 255., 0)).squeeze(0), torch.Tensor(np.expand_dims(HR / 255., 0)).squeeze(0)
-    
+
+
 if __name__ == '__main__':
     PROJECT_PATH = 'G:/Projects/FSRCNN-2016/'
     project_directory = Path(PROJECT_PATH)

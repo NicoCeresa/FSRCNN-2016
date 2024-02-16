@@ -109,14 +109,14 @@ if __name__ == '__main__':
         print(f"Epoch: {epoch}  || Train Loss: {train_loss:.4f} || Test Loss: {test_loss:.4f} || AVG PSNR: {np.mean(psnr_list):.4f}")
 
     # Pickle it
-    with open(f'models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'wb') as f:
+    with open(f'app/api/models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'wb') as f:
         pickle.dump(model, f)
     
-    with open(f'models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'rb') as f:
+    with open(f'app/api/models/FSRCNN_{SCALE}s_{BATCH_SIZE}b_{EPOCHS}e_0.1.0.pickle', 'rb') as f:
         pickle.load(f)
     
     # Save Model
-    MODEL_PATH = Path("models")
+    MODEL_PATH = Path("app/models")
     if MODEL_PATH.is_dir():
             print(f"{MODEL_PATH} already exists")
     else:

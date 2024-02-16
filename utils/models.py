@@ -1,19 +1,19 @@
+import math 
 import torch
 from torch import nn
-import math 
 
 class FSRCNN(nn.Module):
     """
     Model from https://arxiv.org/abs/1608.00367
     """
-    def __init__(self, scale:int, num_channels=1, d=56, s=12, m=4):
+    def __init__(self, scale:int, num_channels=3, d=56, s=12, m=4):
         """
         d: LR feature dimension
         s: level of shrinking
         m: number of mapping layers
         n: scaling factor
         """
-        super(FSRCNN, self).__init__()
+        super().__init__()
         if scale < 2  and scale > 5:
             raise ValueError("Scaling must be 2, 3, or 4")
         else:
@@ -24,13 +24,13 @@ class FSRCNN(nn.Module):
                                kernel_size=5,
                                padding=5//2,
                                padding_mode='zeros',
-                               ),
+                               device=device),
                                    nn.PReLU(d))
         
         self.Conv2 = nn.Sequential(nn.Conv2d(in_channels=d,
                                out_channels=s,
                                kernel_size=1,
-                               ),
+                               device=device),
                                    nn.PReLU(s))
         
         self.Conv3 = []
@@ -40,14 +40,14 @@ class FSRCNN(nn.Module):
                                kernel_size=3,
                                padding=3//2,
                                padding_mode='zeros',
-                               ),
+                               device=device),
                                 nn.PReLU(s)])
         self.Conv3 = nn.Sequential(*self.Conv3)
         
         self.Conv4 = nn.Sequential(nn.Conv2d(in_channels=s,
                                out_channels=d,
                                kernel_size=1,
-                               ),
+                               device=device),
                                    nn.PReLU(d))
         
         self.DeConv = nn.ConvTranspose2d(in_channels=d,
@@ -56,7 +56,7 @@ class FSRCNN(nn.Module):
                                          stride=self.scale,
                                          padding=9//2,
                                          output_padding=self.scale-1,
-                                         )
+                                         device=device)
         
         self._init_weights()
         
@@ -79,14 +79,13 @@ class FSRCNN(nn.Module):
             
         
     def forward(self, x):
-        x = self.Conv1(x)
+        block1 = self.Conv1(x)
         # print(block1.shape)
-        x = self.Conv2(x)
+        block2 = self.Conv2(block1)
         # print(block2.shape)
-        x = self.Conv3(x)
+        block3 = self.Conv3(block2)
         # print(block3.shape)
-        x = self.Conv4(x)
+        block4 = self.Conv4(block3)
         # print(block4.shape)
-        x = self.DeConv(x)
-        return x
-    
+        out = self.DeConv(block4)
+        return out
