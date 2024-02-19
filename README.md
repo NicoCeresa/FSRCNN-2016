@@ -59,14 +59,18 @@
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
+    	<tr>
     	<td>
-    		<center><img src="./images/library_OG.png""></center>
+    		<center><img src="./images/china_og.png""></center>
+    	</td>
+		<td>
+    		<center><img src="./images/china_crop.png""></center>
     	</td>
     	<td>
-    		<center><img src="./images/library_LR.png"></center>
+    		<center><img src="./images/china_lr.png"></center>
     	</td>
     	<td>
-    		<center><img src="./images/library_HR.png"></center>
+    		<center><img src="./images/china_hr.png"></center>
     	</td>
     </tr>
 </table>
