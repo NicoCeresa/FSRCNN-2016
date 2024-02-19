@@ -79,10 +79,10 @@
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/bee_OG.png""></center>
+    		<center><img src="./images/bee_OG.png"></center>
     	</td>
         <td>
-    		<center><img src="./images/bee_OG_crop.png""></center>
+    		<center><img src="./images/bee_og_crop.png"></center>
     	</td>
     	<td>
     		<center><img src="./images/bee_LR.png"></center>
