@@ -72,7 +72,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/house_LR.bmp""></center>
+    		<center><img src="./images/house_LR.png""></center>
     	</td>
     	<!-- <td>
     		<center><img src="./images/butterfly_GT_bicubic_x3.bmp"></center>
