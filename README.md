@@ -46,7 +46,7 @@
     		<center><img src="./images/buddha_LR.png"></center>
     	</td>
     	<td>
-    		<center><img src="./images/buddha_HR.png"></center>
+    		<center><img src="./images/buddha_hr.png"></center>
     	</td>
     </tr>
     <tr>
