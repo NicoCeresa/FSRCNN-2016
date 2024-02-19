@@ -51,7 +51,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 <table>
     <tr>
         <td><center>Original</center></td>
-        <td><center>BICUBIC x3</center></td>
+        <!-- <td><center>BICUBIC x3</center></td> -->
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
@@ -67,7 +67,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
     </tr>
     <tr>
         <td><center>Original</center></td>
-        <td><center>BICUBIC x3</center></td>
+        <!-- <td><center>BICUBIC x3</center></td> -->
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
