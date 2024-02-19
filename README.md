@@ -25,13 +25,13 @@
 | Eval. Mat | Scale | Paper | Mine |
 |-----------|-------|-------|-----------------|
 | PSNR | 2 | 36.94 | x |
-| PSNR | 3 | 33.06 | 32.05 |
+| PSNR | 3 | 33.16 | 32.05 |
 | PSNR | 4 | 30.55 | x |
 
 
-<img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
+<!-- <img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
 <br/>
-<img width="393" alt="Screen Shot 2024-01-29 at 12 58 01 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/f622bad8-833b-47b7-aa92-4b104e008a20">
+<img width="393" alt="Screen Shot 2024-01-29 at 12 58 01 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/f622bad8-833b-47b7-aa92-4b104e008a20"> -->
 
 <table>
     <tr>
