@@ -28,7 +28,6 @@
 | PSNR | 3 | 33.16 | 32.05 |
 | PSNR | 4 | 30.55 | x |
 
-
 <!-- <img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
 <br/>
 <img width="393" alt="Screen Shot 2024-01-29 at 12 58 01 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/f622bad8-833b-47b7-aa92-4b104e008a20"> -->
@@ -36,18 +35,18 @@
 <table>
     <tr>
         <td><center>Original</center></td>
-        <!-- <td><center>BICUBIC x3</center></td> -->
+        <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/woman_LR.png""></center>
+    		<center><img src="./images/buddha_og.png""></center>
     	</td>
-    	<!-- <td>
-    		<center><img src="./images/lenna_bicubic_x3.bmp"></center>
-    	</td> -->
     	<td>
-    		<center><img src="./images/woman_HR.png"></center>
+    		<center><img src="./images/buddha_LR.png"></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/buddha_HR.png"></center>
     	</td>
     </tr>
     <tr>
