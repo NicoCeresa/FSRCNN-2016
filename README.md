@@ -67,6 +67,34 @@
     </tr>
 </table>
 
+### Mean Squared Error vs Mean Absoulte Error Comparison
+
+<table>
+    <tr>
+        <td><center>Original</center></td>
+        <td><center>Original Cropped</center></td>
+        <td><center>BICUBIC x3</center></td>
+        <td><center>FSRCNN x3 MSE</center></td>
+        <td><center>FSRCNN x3 MAE</center></td>
+    </tr>
+    <tr>
+    	<td>
+    		<center><img src="./images/bee_OG.png""></center>
+    	</td>
+        <td>
+    		<center><img src="./images/bee_OG_crop.png""></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/bee_LR.png"></center>
+    	</td>
+        <td>
+    		<center><img src="./images/bee_hr_mse.png""></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/bee_hr_mae.png"></center>
+    	</td>
+    </tr>
+</table>
 
 ## Model Architecture
 
