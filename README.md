@@ -35,18 +35,22 @@
 <table>
     <tr>
         <td><center>Original</center></td>
+		<td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/buddha_og.png""></center>
+    		<center><img src="./images/cottage_og.png""></center>
+    	</td>
+		<td>
+    		<center><img src="./images/cottage_crop.png""></center>
     	</td>
     	<td>
-    		<center><img src="./images/buddha_LR.png"></center>
+    		<center><img src="./images/cottage_lr.png"></center>
     	</td>
     	<td>
-    		<center><img src="./images/buddha_hr.png"></center>
+    		<center><img src="./images/cottage_hr.png"></center>
     	</td>
     </tr>
     <tr>
@@ -66,6 +70,8 @@
     	</td>
     </tr>
 </table>
+
+<br/>
 
 ### Mean Squared Error vs Mean Absoulte Error Comparison
 
