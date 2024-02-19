@@ -37,7 +37,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 **Note:** I havent had the time to train a scale of 2 or 4 yet as it takes all day but it is coming soon <br/>
 
 
-| Eval. Mat | Scale | Paper | Ours |
+| Eval. Mat | Scale | Paper | Mine |
 |-----------|-------|-------|-----------------|
 | PSNR | 2 | 36.94 | x |
 | PSNR | 3 | 33.06 | 32.05 |
