@@ -56,13 +56,13 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/lenna.bmp""></center>
+    		<center><img src="./images/woman_LR.png""></center>
     	</td>
-    	<td>
+    	<!-- <td>
     		<center><img src="./images/lenna_bicubic_x3.bmp"></center>
-    	</td>
+    	</td> -->
     	<td>
-    		<center><img src="./images/lenna_fsrcnn_x3.bmp"></center>
+    		<center><img src="./images/woman_HR.png"></center>
     	</td>
     </tr>
     <tr>
@@ -72,13 +72,13 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/butterfly_GT.bmp""></center>
+    		<center><img src="./images/house_LR.bmp""></center>
     	</td>
-    	<td>
+    	<!-- <td>
     		<center><img src="./images/butterfly_GT_bicubic_x3.bmp"></center>
-    	</td>
+    	</td> -->
     	<td>
-    		<center><img src="./images/butterfly_GT_fsrcnn_x3.bmp"></center>
+    		<center><img src="./images/house_HR.png"></center>
     	</td>
     </tr>
 </table>
