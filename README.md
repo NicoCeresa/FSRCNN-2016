@@ -51,18 +51,18 @@
     </tr>
     <tr>
         <td><center>Original</center></td>
-        <!-- <td><center>BICUBIC x3</center></td> -->
+        <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/house_LR.png""></center>
+    		<center><img src="./images/library_OG.png""></center>
     	</td>
-    	<!-- <td>
-    		<center><img src="./images/butterfly_GT_bicubic_x3.bmp"></center>
-    	</td> -->
     	<td>
-    		<center><img src="./images/house_HR.png"></center>
+    		<center><img src="./images/library_LR.png"></center>
+    	</td>
+    	<td>
+    		<center><img src="./images/library_HR.png"></center>
     	</td>
     </tr>
 </table>
