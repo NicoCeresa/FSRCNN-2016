@@ -32,9 +32,17 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 
 
 
-## Performance
+## Results
 
-** Achieved an average PSNR of 28.69 and a max of 38.97 ** <br/>
+**Note:** I havent had the time to train a scale of 2 or 4 yet as it takes all day but it is coming soon <br/>
+
+
+| Eval. Mat | Scale | Paper | Ours |
+|-----------|-------|-------|-----------------|
+| PSNR | 2 | 36.94 | x |
+| PSNR | 3 | 33.06 | 32.05 |
+| PSNR | 4 | 30.55 | x |
+
 
 <img width="490" alt="Screen Shot 2024-01-29 at 12 56 42 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/e6fb9398-b3f0-43af-928a-6016607738bc"> <br/>
 <br/>
