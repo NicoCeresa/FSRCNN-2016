@@ -16,7 +16,7 @@
         }
       }
     </style>
-    <link rel="stylesheet" href="./app/api/static/style.css">
+    <link rel="stylesheet" href="./static/style.css">
 
     <title>Image Super-Resolution by using PyTorch</title>
   </head>
@@ -24,7 +24,7 @@
 
 
     <form class="form-signin" method=post action="{{ url_for('get_prediction')}}" enctype=multipart/form-data>
-        <img class="mb-4" src="./app/api/static/pytorch.png" alt="" width="72" />
+        <img class="mb-4" src="./static/pytorch.png" alt="" width="72" />
         <h1 class="h3 mb-3 font-weight-normal">FSRCNN</h1>
         <input type="file" name="image" class="form-control-file" id="inputfile">
         <br/>

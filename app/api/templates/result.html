@@ -44,19 +44,25 @@
         {% if image_name %}
             <div class="row" align="center">
 
+                <form action="{{ url_for('upload_predict')}}" method="get" enctype='multipart/form-data'>
+                    <input class="input" type="submit" name="Continue" value="Home">
+                </form>
+
+                <div class="column">
+                    <h1>Input Image</h1>
+                    <img src="static/input/{{image_name}}"  height=200px />
+
+                </div>
                 <div class="column">
                     <h1>Output Image X3</h1>
-                    <img src="app/api/static/output/X3_{{image_name}}" />
-
-                    <form action="{{ url_for('download_img', filename='X3_' + image_name)}}" method="get" enctype='multipart/form-data'>
+                    <img src="static/output/X3_{{image_name}}"  height=200px />
+                    <form action="{{ url_for('download_img', filename='X3_' + image_name) }}" method="get" enctype='multipart/form-data'>
                         <input class="input" type="submit" name="download" value="Download">
                     </form>
 
                 </div>
 
-                <form action="{{ url_for('upload_predict')}}" method="get" enctype='multipart/form-data'>
-                        <input class="input" type="submit" name="Continue" value="Continue">
-                </form>
+                
 
             </div>
         {%endif%}
