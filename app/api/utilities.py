@@ -147,18 +147,18 @@ def upscale_cropped(model, img, crop_size):
 
 from torchvision.transforms.functional import to_pil_image
 
-def upscale(model, in_filename, out_filename):
+def upscale(model, in_filename, out_filepath):
     image = Image.open(in_filename).convert('RGB')
     # Convert the image to a PyTorch tensor and add a batch dimension
     image_tensor = v2.ToTensor()(image).unsqueeze(0)
     # Perform the upscale operation using the model
-    HR_tensor = model(image_tensor)
+    HR_tensor = model(image_tensor).squeeze(0)
     # Convert the output tensor back to a PIL image
-    HR_img = to_pil_image(HR_tensor.detach().squeeze(0))
+    HR_img = to_pil_image(HR_tensor)
     # Save the resulting image to the output file
-    HR_img.save(out_filename)
+    HR_img.save(out_filepath)
     
-    return HR_tensor.cpu().squeeze(0)
+    return HR_tensor
 
 
 if __name__ == '__main__':
