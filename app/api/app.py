@@ -16,7 +16,7 @@ model = FSRCNN(scale=3)
 model.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth'))
 
 UPLOAD_FOLDER = 'api/static/input/'
-OUTPUT_FOLDER = 'static/output/'
+OUTPUT_FOLDER = 'api/static/output/'
 
 @app.route('/', methods=['GET'])
 def home():
@@ -34,12 +34,13 @@ def get_prediction():
         image_file = request.files["image"]
         if image_file:
             image_location = os.path.join(UPLOAD_FOLDER, image_file.filename)
+            output_location_x3 = os.path.join(OUTPUT_FOLDER, f'X3_{image_file.filename}')
             if not os.path.exists(image_location):
                 image_file.save(image_location)
-                output_location_x3 = os.path.join(OUTPUT_FOLDER, f'X3_{image_file.filename}')
+                # output_location_x3 = os.path.join(OUTPUT_FOLDER, 'X3_' + image_file.filename)
                 output3 = upscale(model, image_location, output_location_x3)
                 output3_img = to_pil_image(output3)
-                output3_img.save(output_location_x3)
+                # output3_img.save(output_location_x3)
             return render_template('result.html', image_name=image_file.filename)
 
     return render_template('index.html', image_name=None)
