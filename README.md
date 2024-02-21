@@ -4,6 +4,8 @@
 **Authors**: Chao Dong, Chen Change Loy, and Xiaoou Tang <br/>
 **Institution**Department of Information Engineering, The Chinese University of Hong Kong <br/>
 
+## How To Run
+```cd app```
 
 ## Requirements
 
