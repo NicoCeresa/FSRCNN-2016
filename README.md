@@ -5,7 +5,9 @@
 **Institution**Department of Information Engineering, The Chinese University of Hong Kong <br/>
 
 ## How To Run
-```cd app```
+
+1. ```cd app```
+2. ```python3 api/app.py```
 
 ## Requirements
 
