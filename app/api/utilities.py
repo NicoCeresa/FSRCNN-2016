@@ -108,7 +108,7 @@ class FSRCNN(nn.Module):
         return x
 
 loaded_model_mse = FSRCNN(scale=3)
-loaded_model_mse.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth'))
+loaded_model_mse.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
 
 def reformat(img, crop_size):
     im_height = img.height
@@ -147,18 +147,38 @@ def upscale_cropped(model, img, crop_size):
 
 from torchvision.transforms.functional import to_pil_image
 
-def upscale(model, in_filename, out_filepath):
-    image = Image.open(in_filename).convert('RGB')
-    # Convert the image to a PyTorch tensor and add a batch dimension
-    image_tensor = v2.ToTensor()(image).unsqueeze(0)
-    # Perform the upscale operation using the model
-    HR_tensor = model(image_tensor).squeeze(0)
-    # Convert the output tensor back to a PIL image
-    HR_img = to_pil_image(HR_tensor)
-    # Save the resulting image to the output file
-    HR_img.save(out_filepath)
+# def upscale(model, in_filename, out_filepath):
+#     image = Image.open(in_filename).convert('RGB')
+#     # Convert the image to a PyTorch tensor and add a batch dimension
+#     image_tensor = v2.ToTensor()(image).unsqueeze(0)
+#     # Perform the upscale operation using the model
+#     with torch.inference_mode():
+#         HR_tensor = model(image_tensor).squeeze(0)
+#     # Convert the output tensor back to a PIL image
+#     HR_img = to_pil_image(HR_tensor)
+#     # Save the resulting image to the output file
+#     HR_img.save(out_filepath)
     
-    return HR_tensor
+#     return HR_tensor.cpu()
+
+
+def upscale(model, in_loc, out_loc):
+    # image = Image.open('api/static/input/{}'.format(file)).convert('RGB')
+    image = Image.open(in_loc).convert('RGB')
+    image_tensor = v2.ToTensor()(image).unsqueeze(0)
+    with torch.inference_mode():
+        HR_img = model(image_tensor)
+    # im_height = HR_img.height
+    # im_width = HR_img.width
+    image_formatted = HR_img.squeeze(0).type(torch.float32).cpu().permute(1,2,0)
+    print(image_formatted.shape)
+    
+    plt.imshow(image_formatted)
+    plt.axis(False)
+    plt.margins(False)
+    plt.savefig(f"api/static/output/{out_loc}", bbox_inches='tight', pad_inches=0)
+    return image_formatted
+
 
 
 if __name__ == '__main__':
@@ -167,24 +187,25 @@ if __name__ == '__main__':
     train_image_path =  Path(os.path.join(image_data_path, 'train_images'))
     image_path_list = list(train_image_path.glob("*/*.png"))
     random_img = random.choice(image_path_list)
-    img_path = image_path_list[420]
-    im = Image.open(img_path)
+    print(random_img)
+    # img_path = image_path_list[420]
+    im = Image.open(random_img)
     
     norm_size = (im.height//5, im.width//5)
     LR_size = ((im.height//3)//5, (im.width//3)//5)    
     
     OG_crop, OG_im = reformat(im, crop_size=norm_size)
     LR_im = downscale(im, scale=3,crop_size=LR_size)
-    HR_pred = upscale(loaded_model_mse, 'api/static/input/cottage_og.png', 'api/static/output/X3_cottage_og.png')
+    HR_pred = upscale(loaded_model_mse, random_img, 'test.png')
     print("Upscaled")
-    # print(HR_pred.permute(0,2,3,1).squeeze().shape)
-    OG_im = OG_im.permute(1,2,0)
-    OG_crop = OG_crop.permute(1,2,0)
-    LR_im = LR_im.permute(1,2,0)
-    HR_pred = HR_pred.permute(1,2,0)
-    ims = [OG_im, OG_crop, LR_im, HR_pred]
-    for image in ims:
-        print(image.shape)
-        plt.imshow(image)
-        plt.axis(False)
-        plt.show()
+    # # print(HR_pred.permute(0,2,3,1).squeeze().shape)
+    # OG_im = OG_im.permute(1,2,0)
+    # OG_crop = OG_crop.permute(1,2,0)
+    # LR_im = LR_im.permute(1,2,0)
+    # HR_pred = HR_pred.permute(1,2,0)
+    # ims = [OG_im, OG_crop, LR_im, HR_pred]
+    # for image in ims:
+    #     print(image.shape)
+    #     plt.imshow(image)
+    #     plt.axis(False)
+    #     plt.show()
