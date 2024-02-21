@@ -39,11 +39,11 @@ def get_prediction():
             output_format_x3 = f'X3_{image_file.filename}'
             if not os.path.exists(image_location):
                 image_file.save(image_location)
-            
-                # output_location_x3 = os.path.join(OUTPUT_FOLDER, 'X3_' + image_file.filename)
-                tensor_x3 = upscale(model, image_location, output_format_x3)
-                # img_transform = to_pil_image(image_formatted)
-                # img_transform.save(f"app/api/static/output{output_format}")
+        
+            # output_location_x3 = os.path.join(OUTPUT_FOLDER, 'X3_' + image_file.filename)
+            tensor_x3 = upscale(model, image_location, output_format_x3)
+            # img_transform = to_pil_image(image_formatted)
+            # img_transform.save(f"app/api/static/output{output_format}")
             return render_template('result.html', image_name=image_file.filename)
 
     return render_template('index.html', image_name=None)
@@ -51,7 +51,7 @@ def get_prediction():
 
 @app.route('/api/static/output/<string:filename>', methods=['GET', 'POST'])
 def download_img(filename):
-    return send_from_directory(OUTPUT_FOLDER, filename, as_attachment=True)
+    return send_from_directory('static/output', filename, as_attachment=True)
 
 
 @app.route('/prediction/health-check', methods=['GET'])
