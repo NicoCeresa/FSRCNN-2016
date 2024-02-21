@@ -124,7 +124,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 <img width="401" alt="Screen Shot 2024-01-29 at 12 59 33 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/63e082ae-cb7e-4c71-95ff-4b2cee70ce3e">
 
 ## Web App Demo
-<img src="./api/static/FSRCNN_web_app_demo.PNG">
+<img src="./app/api/static/FSRCNN_web_app_demo.PNG">
 
 ## File Overview
 **notebooks**
