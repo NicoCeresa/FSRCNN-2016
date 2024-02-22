@@ -126,7 +126,7 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 ## Web App Demo
 <img src="./app/api/static/landing_page.png">
 
-<img src="./app/api/static/FSRCNN_web_app_demo.PNG">
+<img src="./app/api/static/fsrcnn_page.png">
 
 ## File Overview
 **notebooks**
