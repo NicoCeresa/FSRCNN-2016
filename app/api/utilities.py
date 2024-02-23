@@ -4,7 +4,6 @@ import math
 import torch
 import pickle
 import random 
-import zipfile
 import pathlib
 import numpy as np
 from torch import nn
@@ -13,6 +12,8 @@ from glob import glob
 from pathlib import Path
 import matplotlib.pyplot as plt
 from torchvision.transforms import v2, InterpolationMode
+from torchvision.transforms.functional import to_pil_image
+
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -107,8 +108,11 @@ class FSRCNN(nn.Module):
         x = self.DeConv(x)
         return x
 
-loaded_model_mse = FSRCNN(scale=3)
-loaded_model_mse.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
+loaded_model_x2 = FSRCNN(scale=2)
+loaded_model_x2.load_state_dict(torch.load(f='api/models/FSRCNN_2s_10e_1b_0.2.0.pth', map_location=device))
+
+loaded_model_x3 = FSRCNN(scale=3)
+loaded_model_x3.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
 
 def reformat(img, crop_size):
     im_height = img.height
@@ -145,22 +149,6 @@ def upscale_cropped(model, img, crop_size):
          v2.ToDtype(torch.float32, scale=True)])
     return img_transform(HR_img)
 
-from torchvision.transforms.functional import to_pil_image
-
-# def upscale(model, in_filename, out_filepath):
-#     image = Image.open(in_filename).convert('RGB')
-#     # Convert the image to a PyTorch tensor and add a batch dimension
-#     image_tensor = v2.ToTensor()(image).unsqueeze(0)
-#     # Perform the upscale operation using the model
-#     with torch.inference_mode():
-#         HR_tensor = model(image_tensor).squeeze(0)
-#     # Convert the output tensor back to a PIL image
-#     HR_img = to_pil_image(HR_tensor)
-#     # Save the resulting image to the output file
-#     HR_img.save(out_filepath)
-    
-#     return HR_tensor.cpu()
-
 
 def upscale(model, in_loc, out_loc):
     # image = Image.open('api/static/input/{}'.format(file)).convert('RGB')
@@ -168,15 +156,14 @@ def upscale(model, in_loc, out_loc):
     image_tensor = v2.ToTensor()(image).unsqueeze(0)
     with torch.inference_mode():
         HR_img = model(image_tensor)
-    # im_height = HR_img.height
-    # im_width = HR_img.width
+
     image_formatted = HR_img.squeeze(0).type(torch.float32).cpu().permute(1,2,0)
     print(image_formatted.shape)
-    
+    plt.switch_backend('agg')    
     plt.imshow(image_formatted)
     plt.axis(False)
     plt.margins(False)
-    plt.savefig(f"api/static/output/{out_loc}", bbox_inches='tight', pad_inches=0)
+    plt.savefig(f"api/static/output/{out_loc}", bbox_inches='tight', pad_inches=0, dpi=300)
     return image_formatted
 
 
