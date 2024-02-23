@@ -28,7 +28,7 @@
 
 | Eval. Mat | Scale | Paper | Mine |
 |-----------|-------|-------|-----------------|
-| PSNR | 2 | 36.94 | x |
+| PSNR | 2 | 36.94 | 34.77 |
 | PSNR | 3 | 33.16 | 32.05 |
 | PSNR | 4 | 30.55 | x |
 
@@ -124,9 +124,9 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 <img width="401" alt="Screen Shot 2024-01-29 at 12 59 33 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/63e082ae-cb7e-4c71-95ff-4b2cee70ce3e">
 
 ## Web App Demo
-<img src="./app/api/static/landing_page.png">
+<img src="./app/api/static/.other_ims/landing_page.png">
 
-<img src="./app/api/static/fsrcnn_page.png">
+<img src="./app/api/static/.other_ims/fsrcnn_page.png">
 
 ## File Overview
 **notebooks**
