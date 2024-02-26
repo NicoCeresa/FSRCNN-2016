@@ -21,8 +21,11 @@ model_x2.load_state_dict(torch.load(f='api/models/FSRCNN_2s_10e_1b_0.2.0.pth', m
 model_x3 = FSRCNN(scale=3)
 model_x3.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
 
+model_x4 = FSRCNN(scale=4)
+model_x4.load_state_dict(torch.load(f='api/models/FSRCNN_4s_10e_1b_0.2.0.pth', map_location=device))
+
 UPLOAD_FOLDER = 'api/static/input/'
-OUTPUT_FOLDER = 'api/static/output/'
+# OUTPUT_FOLDER = 'api/static/output/'
 
 @app.route('/', methods=['GET'])
 def home():
@@ -42,12 +45,14 @@ def get_prediction():
             image_location = os.path.join(UPLOAD_FOLDER, image_file.filename)
             output_format_x2 = f'X2/X2_{image_file.filename}'
             output_format_x3 = f'X3/X3_{image_file.filename}'
+            output_format_x4 = f'X4/X4_{image_file.filename}'
             if not os.path.exists(image_location):
                 image_file.save(image_location)
         
             # output_location_x3 = os.path.join(OUTPUT_FOLDER, 'X3_' + image_file.filename)
             tensor_x2 = upscale(model_x2, image_location, output_format_x2)
             tensor_x3 = upscale(model_x3, image_location, output_format_x3)
+            tensor_x4 = upscale(model_x4, image_location, output_format_x4)
             # img_transform = to_pil_image(image_formatted)
             # img_transform.save(f"app/api/static/output{output_format}")
             return render_template('result.html', image_name=image_file.filename)

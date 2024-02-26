@@ -114,6 +114,9 @@ loaded_model_x2.load_state_dict(torch.load(f='api/models/FSRCNN_2s_10e_1b_0.2.0.
 loaded_model_x3 = FSRCNN(scale=3)
 loaded_model_x3.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
 
+loaded_model_x4 = FSRCNN(scale=4)
+loaded_model_x4.load_state_dict(torch.load(f='api/models/FSRCNN_4s_10e_1b_0.2.0.pth', map_location=device))
+
 def reformat(img, crop_size):
     im_height = img.height
     im_width = img.width
@@ -153,7 +156,7 @@ def upscale_cropped(model, img, crop_size):
 def upscale(model, in_loc, out_loc):
     # image = Image.open('api/static/input/{}'.format(file)).convert('RGB')
     image = Image.open(in_loc).convert('RGB')
-    image_tensor = v2.ToTensor()(image).unsqueeze(0)
+    image_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])(image).unsqueeze(0)
     with torch.inference_mode():
         HR_img = model(image_tensor)
 
@@ -183,16 +186,15 @@ if __name__ == '__main__':
     
     OG_crop, OG_im = reformat(im, crop_size=norm_size)
     LR_im = downscale(im, scale=3,crop_size=LR_size)
-    HR_pred = upscale(loaded_model_mse, random_img, 'test.png')
+    HR_pred = upscale(loaded_model_x3, random_img, 'test.png')
     print("Upscaled")
-    # # print(HR_pred.permute(0,2,3,1).squeeze().shape)
-    # OG_im = OG_im.permute(1,2,0)
-    # OG_crop = OG_crop.permute(1,2,0)
-    # LR_im = LR_im.permute(1,2,0)
-    # HR_pred = HR_pred.permute(1,2,0)
-    # ims = [OG_im, OG_crop, LR_im, HR_pred]
-    # for image in ims:
-    #     print(image.shape)
-    #     plt.imshow(image)
-    #     plt.axis(False)
-    #     plt.show()
+    # print(HR_pred.permute(0,2,3,1).squeeze().shape)
+    OG_im = OG_im.permute(1,2,0)
+    OG_crop = OG_crop.permute(1,2,0)
+    LR_im = LR_im.permute(1,2,0)
+    ims = [OG_im, OG_crop, LR_im, HR_pred]
+    for image in ims:
+        print(image.shape)
+        plt.imshow(image)
+        plt.axis(False)
+        plt.show()

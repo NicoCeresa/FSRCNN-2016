@@ -13,13 +13,15 @@
             padding: 0;
             display: flex;
             justify-content: center;
+            background-image: url('/static/.other_ims/stars.gif'); /* Add this line to set the background image */
+            background-repeat: repeat; /* Adjust this based on your preference */
+            color: #fff
         }
 
         img {
             max-width: 100%; /* Ensure images don't exceed the container's width */
             height: auto; /* Maintain aspect ratio */
             width: 400px; /* Set a fixed width */
-            {% comment %} height: 300px; /* Set a fixed height */ {% endcomment %}
             display: block; /* Center the image horizontally */
             margin: 0 auto; /* Center the image horizontally */
         }
@@ -58,7 +60,7 @@
         }
 
         .input {
-            background-color: #007bff;
+            background-color: #0015ff;
             border: none;
             color: white;
             padding: 15px 32px;
@@ -93,7 +95,7 @@
             text-align: center;
             margin-bottom: 10px;
             font-size: 18px;
-            color: #333;
+            color: #fff;
         }
 
         .download-btn {
@@ -120,13 +122,13 @@
             <div class="column">
                 <h2 class="image-label">Input Image</h2>
                 <div class="image-container">
-                    <img src="static/input/{{image_name}}" alt="Input Image" id="input-image">
+                    <img src="static/input/{{image_name}}" height=100px alt="Input Image" id="input-image">
                 </div>
             </div>
             <div class="column">
                 <h2 class="image-label">Output Image X2</h2>
                 <div class="image-container">
-                    <img src="/static/output/X2/X2_{{image_name}}" alt="Output Image X2" id="output-image-2">
+                    <img src="/static/output/X2/X2_{{image_name}}" height=200px alt="Output Image X2" id="output-image-2">
                 </div>
                 <!-- Move the download button here -->
                 <div class="download-btn">
@@ -138,11 +140,23 @@
             <div class="column">
                 <h2 class="image-label">Output Image X3</h2>
                 <div class="image-container">
-                    <img src="/static/output/X3/X3_{{image_name}}" alt="Output Image X3" id="output-image-3">
+                    <img src="/static/output/X3/X3_{{image_name}}" height=300px alt="Output Image X3" id="output-image-3">
                 </div>
                 <!-- Move the download button here -->
                 <div class="download-btn">
                     <form action="{{ url_for('download_img', filename='X3/' + 'X3_' + image_name) }}" method="get" enctype='multipart/form-data'>
+                        <input class="input" type="submit" name="download" value="Download">
+                    </form>
+                </div>
+            </div>
+            <div class="column">
+                <h2 class="image-label">Output Image X4</h2>
+                <div class="image-container">
+                    <img src="/static/output/X4/X4_{{image_name}}" height=400px alt="Output Image X4" id="output-image-4">
+                </div>
+                <!-- Move the download button here -->
+                <div class="download-btn">
+                    <form action="{{ url_for('download_img', filename='X4/' + 'X4_' + image_name) }}" method="get" enctype='multipart/form-data'>
                         <input class="input" type="submit" name="download" value="Download">
                     </form>
                 </div>
@@ -156,6 +170,7 @@
             const inputImage = document.getElementById('input-image');
             const outputImage2 = document.getElementById('output-image-2');
             const outputImage3 = document.getElementById('output-image-3');
+            const outputImage4 = document.getElementById('output-image-4');
     
             if (inputImage) {
                 inputImage.onload = () => {
@@ -184,6 +199,17 @@
                     const outputHeight = inputHeight * 3;
                     // Adjusted CSS selector to target the second image label
                     document.querySelector('.column:nth-of-type(3) .image-label').innerText += ` (New Size: ${outputWidth}x${outputHeight})`;
+                };
+            }
+
+            if (outputImage4) {
+                outputImage4.onload = () => {
+                    const inputWidth = inputImage.naturalWidth;
+                    const inputHeight = inputImage.naturalHeight;
+                    const outputWidth = inputWidth * 4;
+                    const outputHeight = inputHeight * 4;
+                    // Adjusted CSS selector to target the second image label
+                    document.querySelector('.column:nth-of-type(4) .image-label').innerText += ` (New Size: ${outputWidth}x${outputHeight})`;
                 };
             }
         });
