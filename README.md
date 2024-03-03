@@ -5,9 +5,15 @@
 **Institution**Department of Information Engineering, The Chinese University of Hong Kong <br/>
 
 ## How To Run
+**1. With Docker** <br/>
+```cd app``` <br/>
+```docker build -t fsrcnn```<br/>
+```docker compose up```<br/>
+Paste this in your browser: ```http://localhost:8000/```<br/>
 
-1. ```cd app```
-2. ```python3 api/app.py```
+**2. Without Docker** <br/>
+```cd app```<br/>
+```python3 api/app.py```<br/>
 
 ## Requirements
 
