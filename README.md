@@ -8,7 +8,7 @@
 **1. With Docker** <br/>
 ```cd app``` <br/>
 ```docker build -t fsrcnn```<br/>
-```docker compose up```<br/>
+```docker run -p 8000:8000 fsrcnn```<br/>
 Paste this in your browser: ```http://localhost:8000/```<br/>
 
 **2. Without Docker** <br/>
