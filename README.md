@@ -45,7 +45,7 @@ Paste this in your browser: ```http://localhost:8000/```<br/>
 <table>
     <tr>
         <td><center>Original</center></td>
-		<td><center>Original Cropped</center></td>
+	<td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
@@ -65,6 +65,7 @@ Paste this in your browser: ```http://localhost:8000/```<br/>
     </tr>
     <tr>
         <td><center>Original</center></td>
+	<td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
