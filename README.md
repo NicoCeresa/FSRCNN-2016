@@ -19,12 +19,10 @@
 
 1. Python==3.11.5
 2. NumPy==1.26.3
-3. Pytorch==2.1.2 (with cuda)
-4. Matplotlib
-5. PIL
-7. Pathlib
-8. glob
-9. zipfile
+3. PyTorch==2.1.2
+4. torchvision==0.16.2
+5. Flask>=3.0.2
+6. Pillow==10.2.0
 
 
 ## Results
