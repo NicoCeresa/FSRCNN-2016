@@ -2,6 +2,9 @@
 ARG PYTHON_VERSION=3.11.5
 FROM python:${PYTHON_VERSION}-slim as base
 
+# Install C++ compiler for torch.compile optimization
+RUN apt-get update && apt-get install -y g++ && rm -rf /var/lib/apt/lists/*
+
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
 

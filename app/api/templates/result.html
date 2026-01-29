@@ -19,11 +19,10 @@
         }
 
         img {
-            max-width: 100%; /* Ensure images don't exceed the container's width */
+            max-width: 100%;
             height: auto; /* Maintain aspect ratio */
-            width: 400px; /* Set a fixed width */
-            display: block; /* Center the image horizontally */
-            margin: 0 auto; /* Center the image horizontally */
+            display: block;
+            margin: 0 auto;
         }
 
         .container {
@@ -45,18 +44,16 @@
             right: 20px;
         }
 
-        .row::after {
-            content: "";
-            clear: both;
-            display: table;
+        .row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            gap: 20px; /* Space between grid items */
+            margin-top: 20px;
         }
 
         .column {
-            float: left;
-            width: 50%;
             padding: 10px;
-            box-sizing: border-box; /* Ensure padding is included in width */
-            position: relative; /* Add position relative */
+            box-sizing: border-box;
         }
 
         .input {
@@ -102,6 +99,18 @@
             text-align: center; /* Align button center */
             margin-top: 20px; /* Add top margin for spacing */
         }
+
+        /* Responsive layout for mobile */
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr; /* Single column on mobile */
+            }
+            
+            .home-btn {
+                position: static;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -110,9 +119,8 @@
             <h1>Super Resolution Image</h1>
         </div>
 
-        <!-- Move the home button outside of the row -->
-        <div class="home-btn"> <!-- New div for home button -->
-            <form action="{{ url_for('upload_predict')}}" method="get" enctype='multipart/form-data'>
+        <div class="home-btn">
+            <form action="{{ url_for('home')}}" method="get" enctype='multipart/form-data'>
                 <input class="input" type="submit" name="Continue" value="Home">
             </form>
         </div>
@@ -122,45 +130,45 @@
             <div class="column">
                 <h2 class="image-label">Input Image</h2>
                 <div class="image-container">
-                    <img src="static/input/{{image_name}}" height=100px alt="Input Image" id="input-image">
+                    <img src="static/input/{{original_name}}" alt="Input Image" id="input-image">
                 </div>
             </div>
+            {% if 2 in scales %}
             <div class="column">
-                <h2 class="image-label">Output Image X2</h2>
+                <h2 class="image-label">2× Upscaled</h2>
                 <div class="image-container">
-                    <img src="/static/output/X2/X2_{{image_name}}" height=200px alt="Output Image X2" id="output-image-2">
+                    <img src="/static/output/X2/X2_{{image_name}}" alt="Output Image X2" id="output-image-2">
                 </div>
                 <!-- Move the download button here -->
                 <div class="download-btn">
-                    <form action="{{ url_for('download_img', filename='X2/' + 'X2_' + image_name) }}" method="get" enctype='multipart/form-data'>
-                        <input class="input" type="submit" name="download" value="Download">
-                    </form>
+                    <a href="{{ url_for('download_img', filename='X2/X2_' + image_name) }}" download="X2_{{image_name}}" class="input" style="display: inline-block; text-decoration: none; text-align: center; line-height: 40px;">Download</a>
                 </div>
             </div>
+            {% endif %}
+            {% if 3 in scales %}
             <div class="column">
-                <h2 class="image-label">Output Image X3</h2>
+                <h2 class="image-label">3× Upscaled</h2>
                 <div class="image-container">
-                    <img src="/static/output/X3/X3_{{image_name}}" height=300px alt="Output Image X3" id="output-image-3">
+                    <img src="/static/output/X3/X3_{{image_name}}" alt="Output Image X3" id="output-image-3">
                 </div>
                 <!-- Move the download button here -->
                 <div class="download-btn">
-                    <form action="{{ url_for('download_img', filename='X3/' + 'X3_' + image_name) }}" method="get" enctype='multipart/form-data'>
-                        <input class="input" type="submit" name="download" value="Download">
-                    </form>
+                    <a href="{{ url_for('download_img', filename='X3/X3_' + image_name) }}" download="X3_{{image_name}}" class="input" style="display: inline-block; text-decoration: none; text-align: center; line-height: 40px;">Download</a>
                 </div>
             </div>
+            {% endif %}
+            {% if 4 in scales %}
             <div class="column">
-                <h2 class="image-label">Output Image X4</h2>
+                <h2 class="image-label">4× Upscaled</h2>
                 <div class="image-container">
-                    <img src="/static/output/X4/X4_{{image_name}}" height=400px alt="Output Image X4" id="output-image-4">
+                    <img src="/static/output/X4/X4_{{image_name}}" alt="Output Image X4" id="output-image-4">
                 </div>
                 <!-- Move the download button here -->
                 <div class="download-btn">
-                    <form action="{{ url_for('download_img', filename='X4/' + 'X4_' + image_name) }}" method="get" enctype='multipart/form-data'>
-                        <input class="input" type="submit" name="download" value="Download">
-                    </form>
+                    <a href="{{ url_for('download_img', filename='X4/X4_' + image_name) }}" download="X4_{{image_name}}" class="input" style="display: inline-block; text-decoration: none; text-align: center; line-height: 40px;">Download</a>
                 </div>
             </div>
+            {% endif %}
         </div>
         {% endif %}
     </div>
@@ -171,12 +179,14 @@
             const outputImage2 = document.getElementById('output-image-2');
             const outputImage3 = document.getElementById('output-image-3');
             const outputImage4 = document.getElementById('output-image-4');
+            
+            const columns = document.querySelectorAll('.column');
     
             if (inputImage) {
                 inputImage.onload = () => {
                     const inputWidth = inputImage.naturalWidth;
                     const inputHeight = inputImage.naturalHeight;
-                    document.querySelector('.image-label:nth-of-type(1)').innerText += ` (Original Size: ${inputWidth}x${inputHeight})`;
+                    columns[0].querySelector('.image-label').innerText += ` (${inputWidth}x${inputHeight})`;
                 };
             }
 
@@ -186,8 +196,7 @@
                     const inputHeight = inputImage.naturalHeight;
                     const outputWidth = inputWidth * 2;
                     const outputHeight = inputHeight * 2;
-                    // Adjusted CSS selector to target the second image label
-                    document.querySelector('.column:nth-of-type(2) .image-label').innerText += ` (New Size: ${outputWidth}x${outputHeight})`;
+                    columns[1].querySelector('.image-label').innerText += ` (${outputWidth}x${outputHeight})`;
                 };
             }
     
@@ -197,8 +206,7 @@
                     const inputHeight = inputImage.naturalHeight;
                     const outputWidth = inputWidth * 3;
                     const outputHeight = inputHeight * 3;
-                    // Adjusted CSS selector to target the second image label
-                    document.querySelector('.column:nth-of-type(3) .image-label').innerText += ` (New Size: ${outputWidth}x${outputHeight})`;
+                    columns[2].querySelector('.image-label').innerText += ` (${outputWidth}x${outputHeight})`;
                 };
             }
 
@@ -208,8 +216,7 @@
                     const inputHeight = inputImage.naturalHeight;
                     const outputWidth = inputWidth * 4;
                     const outputHeight = inputHeight * 4;
-                    // Adjusted CSS selector to target the second image label
-                    document.querySelector('.column:nth-of-type(4) .image-label').innerText += ` (New Size: ${outputWidth}x${outputHeight})`;
+                    columns[3].querySelector('.image-label').innerText += ` (${outputWidth}x${outputHeight})`;
                 };
             }
         });

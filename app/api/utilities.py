@@ -5,6 +5,7 @@ import torch
 import pickle
 import random 
 import pathlib
+import logging
 import numpy as np
 from torch import nn
 from PIL import Image
@@ -14,7 +15,8 @@ import matplotlib.pyplot as plt
 from torchvision.transforms import v2, InterpolationMode
 from torchvision.transforms.functional import to_pil_image
 
-
+# Configure logging
+logger = logging.getLogger(__name__)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 torch.cuda.empty_cache()
@@ -154,20 +156,86 @@ def upscale_cropped(model, img, crop_size):
 
 
 def upscale(model, in_loc, out_loc):
+    logger.info(f"Starting upscale for {in_loc}")
     # image = Image.open('api/static/input/{}'.format(file)).convert('RGB')
     image = Image.open(in_loc).convert('RGB')
+    logger.info(f"Image opened: {image.size}")
+    
+    # Optional: Limit maximum input size to prevent memory issues and speed up processing
+    MAX_DIMENSION = 4096  # Adjust based on your needs
+    if max(image.size) > MAX_DIMENSION:
+        ratio = MAX_DIMENSION / max(image.size)
+        new_size = tuple(int(dim * ratio) for dim in image.size)
+        image = image.resize(new_size, Image.Resampling.LANCZOS)
+        logger.info(f"Resized large image to: {image.size}")
+    
     image_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])(image).unsqueeze(0)
+    
+    # Move to GPU if available
+    device = next(model.parameters()).device
+    image_tensor = image_tensor.to(device)
+    logger.info(f"Image tensor moved to {device}")
+    
+    # Use automatic mixed precision for faster inference (GPU only)
+    use_amp = device.type == 'cuda'
+    
     with torch.inference_mode():
-        HR_img = model(image_tensor)
+        if use_amp:
+            with torch.amp.autocast(device_type='cuda', dtype=torch.float16):
+                HR_img = model(image_tensor)
+        else:
+            HR_img = model(image_tensor)
+    
+    logger.info(f"Model inference complete. Output shape: {HR_img.shape}")
 
-    image_formatted = HR_img.squeeze(0).type(torch.float32).cpu().permute(1,2,0)
-    print(image_formatted.shape)
-    plt.switch_backend('agg')    
-    plt.imshow(image_formatted)
-    plt.axis(False)
-    plt.margins(False)
-    plt.savefig(f"api/static/output/{out_loc}", bbox_inches='tight', pad_inches=0, dpi=300)
+    # Convert to PIL image directly (much faster than matplotlib)
+    image_formatted = HR_img.squeeze(0).clamp(0, 1).cpu()
+    
+    # Convert tensor to PIL - torchvision expects [C, H, W] format with values in [0, 1]
+    logger.info(f"Tensor range: min={image_formatted.min():.4f}, max={image_formatted.max():.4f}, shape={image_formatted.shape}")
+    pil_image = to_pil_image(image_formatted)
+    
+    # Ensure RGB mode for compatibility
+    if pil_image.mode != 'RGB':
+        logger.info(f"Converting from {pil_image.mode} to RGB")
+        pil_image = pil_image.convert('RGB')
+    
+    # Save directly with PIL - detect format from extension
+    output_path = f"api/static/output/{out_loc}"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
+    # Use pathlib to get the file extension and determine format
+    output_ext = Path(output_path).suffix.lower()
+    format_map = {
+        '.png': 'PNG',
+        '.jpg': 'JPEG',
+        '.jpeg': 'JPEG',
+        '.webp': 'WEBP',
+        '.bmp': 'BMP'
+    }
+    save_format = format_map.get(output_ext, 'JPEG')  # Default to JPEG
+    
+    logger.info(f"Saving as {save_format} to {output_path}")
+    
+    try:
+        if save_format == 'JPEG':
+            # Reduced quality from 95 to 85 for faster saving (still excellent quality)
+            pil_image.save(output_path, format=save_format, quality=85, optimize=False)
+        else:
+            pil_image.save(output_path, format=save_format, optimize=False)
+        
+        # Verify file was created
+        if os.path.exists(output_path):
+            file_size = os.path.getsize(output_path)
+            logger.info(f"Successfully saved {save_format} image: {output_path}, size: {pil_image.size}, file_size: {file_size} bytes")
+        else:
+            logger.error(f"File was not created: {output_path}")
+    except Exception as e:
+        logger.error(f"Error saving image: {e}")
+        raise
+    
     return image_formatted
+
 
 
 
