@@ -2,18 +2,38 @@
 
 **Replicating the results of this paper:** https://arxiv.org/pdf/1608.00367.pdf <br/>
 **Authors**: Chao Dong, Chen Change Loy, and Xiaoou Tang <br/>
-**Institution**Department of Information Engineering, The Chinese University of Hong Kong <br/>
+**Institution**: Department of Information Engineering, The Chinese University of Hong Kong <br/>
+
+## Features
+
+- 🚀 Fast super-resolution using FSRCNN (2×, 3×, 4× upscaling)
+- 🎨 Web interface for easy image processing
+- 🐳 Docker containerization for consistent deployment
+- ⚡ Performance optimizations with torch.compile and mixed precision
+- 📊 Trained on DIV2K dataset with L1 loss for better perceptual quality
 
 ## How To Run
 
-**With Docker (recommended)**
-1. ```cd app```
-2. ```docker build . -t {image name here}```
-3. ```docker run {image name here}```
+**With Docker Compose (recommended)**
+```bash
+cd app
+docker compose up --build
+```
+Then navigate to `http://localhost:8000` in your browser.
+
+**With Docker (alternative)**
+```bash
+cd app
+docker build . -t fsrcnn-app
+docker run -p 8000:8000 fsrcnn-app
+```
 
 **Without Docker (not recommended)**
-1. ```cd app```
-2. ```python3 api/app.py```
+```bash
+cd app
+pip install -r requirements.txt
+python api/app.py
+```
 
 ## Requirements
 
@@ -27,8 +47,7 @@
 
 ## Results
 
-**Note:** I havent had the time to train a scale of 2 or 4 yet as it takes all day but it is coming soon <br/>
-
+All three scales (2×, 3×, 4×) are trained and available in the web application.
 
 | Eval. Mat | Scale | Paper | Mine |
 |-----------|-------|-------|-----------------|
@@ -85,7 +104,7 @@
 
 <br/>
 
-### Mean Squared Error vs Mean Absoulte Error Comparison
+### Mean Squared Error vs Mean Absolute Error Comparison
 
 <table>
     <tr>
