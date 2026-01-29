@@ -152,17 +152,32 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 <img src="./app/api/static/.other_ims/FSRCNN_web_app_demo.png">
 
 ## File Overview
-**notebooks**
-- 02_sandbox.ipynb <br/>
-    - Jupyter notebook that contains everything in one place from ingestion to predictions. This is what I used as a rough draft before restructuring into `.py` files
 
-**utils**
-- helpers.py <br/>
-    - Python file containing helper functions I either created or found to assist with this project. <br/>
-- datasets.py <br/>
-    - Python file containing the custom datasets needed to train this model. Includes the Train and Evaluation datasets as they require different things to function as needed.<br/>
-- models.py<br/>
-    - Python file that contains the model consisting of layers for feature extraction, shrinking, non-linear mapping, expanding, and deconvolution. Uses PReLU instead of ReLU as it is more stable and avoids 'dead features' caused by zero_grad.<br/>
+### `/app` - Web Application
+- **api/app.py** - Flask application with routes for image upload, processing, and download. Loads and compiles FSRCNN models at startup.
+- **api/utilities.py** - Core upscaling logic and FSRCNN model architecture. Handles image preprocessing, inference, and saving.
+- **api/templates/** - Jinja2 templates for the web interface (index.html for upload, result.html for results).
+- **api/static/** - Static assets (CSS, input/output images, demo images).
+- **api/models/** - Pre-trained FSRCNN model weights for 2×, 3×, and 4× scales.
+- **Dockerfile** - Container configuration with Python 3.11, PyTorch, and g++ for torch.compile optimization.
+- **compose.yaml** - Docker Compose configuration for easy deployment.
+- **requirements.txt** - Python dependencies (PyTorch, Flask, Pillow, etc.).
 
-- train.py<br/>
-    - Python file that trains the model using methods train_step, test_step, and train. Evaluates the model using Peak Signal-to-Noise Ratio(PSNR) measured in db. 
+### `/utils` - Training Utilities
+- **helpers.py** - Helper functions for training and evaluation.
+- **datasets.py** - Custom PyTorch datasets for training and evaluation (DIV2K dataset).
+- **models.py** - FSRCNN model architecture with PReLU activation (avoids dead features from ReLU).
+- **train.py** - Training pipeline with train_step, test_step, and PSNR evaluation.
+- **test.py** - Model testing and evaluation utilities.
+- **save_model.py** - Model checkpoint saving utilities.
+
+### `/notebooks` - Development
+- **01_sandbox.ipynb** - Initial experimentation notebook.
+- **02_sandbox.ipynb** - Complete pipeline from ingestion to predictions (rough draft before restructuring).
+
+### `/images` - Training Data
+- **train_images/DIV2K_train_HR/** - High-resolution training images from DIV2K dataset.
+- **valid_images/DIV2K_valid_HR/** - Validation images.
+
+### `/models` - Saved Model Weights
+Pre-trained FSRCNN models for different scales and training configurations.
