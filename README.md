@@ -6,9 +6,9 @@
 
 ## Features
 
-- 🚀 Fast super-resolution using FSRCNN (2×, 3×, 4× upscaling)
-- 🎨 Web interface for easy image processing
-- 🐳 Docker containerization for consistent deployment
+- Fast super-resolution using FSRCNN (2×, 3×, 4× upscaling)
+- Web interface for easy image processing
+- Docker containerization for consistent deployment
 - ⚡ Performance optimizations with torch.compile and mixed precision
 - 📊 Trained on DIV2K dataset with L1 loss for better perceptual quality
 
@@ -181,3 +181,4 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 
 ### `/models` - Saved Model Weights
 Pre-trained FSRCNN models for different scales and training configurations.
+
