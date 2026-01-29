@@ -1,14 +1,10 @@
 import os
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 from flask import Flask, request, render_template, send_from_directory, url_for
 from torchvision.transforms.functional import to_pil_image
 from PIL import Image
 from pathlib import Path
-import base64
-import uuid
-import cv2
 from utilities import upscale, FSRCNN
 
 app = Flask(__name__)
@@ -71,4 +67,4 @@ def get_health_check():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)

@@ -26,12 +26,5 @@ body {
   height: auto;
   padding: 10px;
   font-size: 16px;
-}
-
-.widthSet {
-  max-width: 200px;
-}
-
-.heightSet {
-  max-height: 200px;
+  background-color: #f5f5f5;
 }
