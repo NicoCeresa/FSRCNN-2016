@@ -5,15 +5,15 @@
 **Institution**Department of Information Engineering, The Chinese University of Hong Kong <br/>
 
 ## How To Run
-**1. With Docker** <br/>
-```cd app``` <br/>
-```docker build -t fsrcnn```<br/>
-```docker run -p 8000:8000 fsrcnn```<br/>
-Paste this in your browser: ```http://localhost:8000/```<br/>
 
-**2. Without Docker** <br/>
-```cd app```<br/>
-```python3 api/app.py```<br/>
+**With Docker (recommended)**
+1. ```cd app```
+2. ```docker build . -t {image name here}```
+3. ```docker run {image name here}```
+
+**Without Docker (not recommended)**
+1. ```cd app```
+2. ```python3 api/app.py```
 
 ## Requirements
 
@@ -45,7 +45,7 @@ Paste this in your browser: ```http://localhost:8000/```<br/>
 <table>
     <tr>
         <td><center>Original</center></td>
-	<td><center>Original Cropped</center></td>
+		<td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
@@ -65,7 +65,6 @@ Paste this in your browser: ```http://localhost:8000/```<br/>
     </tr>
     <tr>
         <td><center>Original</center></td>
-	<td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
