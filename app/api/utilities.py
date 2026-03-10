@@ -1,17 +1,10 @@
 import os
-import PIL
-import math 
+import math
 import torch
-import pickle
-import random 
-import pathlib
 import logging
-import numpy as np
 from torch import nn
 from PIL import Image
-from glob import glob
 from pathlib import Path
-import matplotlib.pyplot as plt
 from torchvision.transforms import v2, InterpolationMode
 from torchvision.transforms.functional import to_pil_image
 
@@ -19,7 +12,6 @@ from torchvision.transforms.functional import to_pil_image
 logger = logging.getLogger(__name__)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-torch.cuda.empty_cache()
 
 
 class FSRCNN(nn.Module):
@@ -110,14 +102,6 @@ class FSRCNN(nn.Module):
         x = self.DeConv(x)
         return x
 
-loaded_model_x2 = FSRCNN(scale=2)
-loaded_model_x2.load_state_dict(torch.load(f='api/models/FSRCNN_2s_10e_1b_0.2.0.pth', map_location=device))
-
-loaded_model_x3 = FSRCNN(scale=3)
-loaded_model_x3.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
-
-loaded_model_x4 = FSRCNN(scale=4)
-loaded_model_x4.load_state_dict(torch.load(f='api/models/FSRCNN_4s_10e_1b_0.2.0.pth', map_location=device))
 
 def reformat(img, crop_size):
     im_height = img.height
@@ -240,6 +224,10 @@ def upscale(model, in_loc, out_loc):
 
 
 if __name__ == '__main__':
+    import random
+    import matplotlib.pyplot as plt
+    loaded_model_x3 = FSRCNN(scale=3)
+    loaded_model_x3.load_state_dict(torch.load(f='api/models/FSRCNN_3s_10e_1b_0.2.0.pth', map_location=device))
     project_directory = Path('G:/Projects/FSRCNN-2016/')
     image_data_path = Path(os.path.join(project_directory, 'images'))
     train_image_path =  Path(os.path.join(image_data_path, 'train_images'))

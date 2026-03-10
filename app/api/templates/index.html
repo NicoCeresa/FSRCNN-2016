@@ -3,151 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Super-Resolution by using PyTorch</title>
-    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>FSRCNN — Image Super-Resolution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: {
+                            50:  '#fdfbf7',
+                            100: '#f5f0e8',
+                            200: '#e8dfd0',
+                        },
+                        forest: {
+                            400: '#52976e',
+                            500: '#2d6a4f',
+                            600: '#1b4332',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            padding-top: 5rem;
-            padding-bottom: 5rem;
-            background-color: #f8f9fa;
-            background-image: url('/static/.other_ims/stars.gif'); /* Add this line to set the background image */
-            background-repeat: repeat; /* Adjust this based on your preference */
-            color: #fff
+        .drop-zone.dragging {
+            border-color: #2d6a4f;
+            background-color: #f0f7f3;
         }
-
-        .form-signin {
-            max-width: 330px;
-            padding: 15px;
-            margin: auto;
-        }
-
-        .form-signin .form-control {
-            position: relative;
-            box-sizing: border-box;
-            height: auto;
-            padding: 10px;
-            font-size: 16px;
-        }
-
-        .logo {
-            width: 100px;
-            margin-bottom: 30px;
-        }
-
-        .btn-upload {
-            padding: 12px 30px;
-            font-size: 30px;
-            margin-top: 20px;
-            background-color: #0015ff;
-            border: none;
-            color: white;
-            border-radius: 8px;
-        }
-
-        .btn-upload:hover {
-            background-color: #006eff;
-        }
-
-        .footer {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-            background-color: #343a40;
-            color: #fff;
-        }
-
-        /* Loading spinner styles */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #0015ff;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 1s linear infinite;
-        }
-
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
-
-        .loading-text {
-            color: #fff;
-            font-size: 24px;
-            margin-top: 20px;
+        .spinner {
+            border: 4px solid #e8dfd0;
+            border-top-color: #2d6a4f;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            animation: spin 0.8s linear infinite;
         }
-
     </style>
 </head>
-<body class="text-center">
+<body class="min-h-screen bg-cream-100 flex flex-col items-center justify-center px-4 py-8 font-sans">
+
     <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
+    <div id="loadingOverlay" class="hidden fixed inset-0 bg-forest-600/80 z-50 flex flex-col items-center justify-center gap-4">
         <div class="spinner"></div>
-        <div class="loading-text">Processing your image...</div>
+        <p class="text-cream-50 text-lg font-medium tracking-wide">Processing your image...</p>
     </div>
 
-    <form class="form-signin" id="uploadForm" method="post" action="{{ url_for('get_prediction')}}" enctype="multipart/form-data">
-        <img class="logo" src="./static/.other_ims/mandelbrot.gif" alt="Mandelbrot" style="width: 150px; height: 150px;border-radius:8px">
-        <h1 class="h3 mb-3 font-weight-normal">FSRCNN</h1>
-        <input type="file" name="image" class="form-control-file mb-3" id="inputfile" required>
-        
-        <div class="form-check mb-2" style="text-align: left;">
-            <input class="form-check-input" type="checkbox" name="scale_x2" id="scale_x2" value="2" checked>
-            <label class="form-check-label" for="scale_x2">2× Upscale</label>
-        </div>
-        <div class="form-check mb-2" style="text-align: left;">
-            <input class="form-check-input" type="checkbox" name="scale_x3" id="scale_x3" value="3" checked>
-            <label class="form-check-label" for="scale_x3">3× Upscale</label>
-        </div>
-        <div class="form-check mb-3" style="text-align: left;">
-            <input class="form-check-input" type="checkbox" name="scale_x4" id="scale_x4" value="4" checked>
-            <label class="form-check-label" for="scale_x4">4× Upscale</label>
-        </div>
-        
-        <button class="btn btn-lg btn-primary btn-block btn-upload" type="submit">Scale Image</button>
-    </form>
+    <!-- Card -->
+    <div class="w-full max-w-2xl bg-cream-50 rounded-2xl shadow-lg border border-cream-200 p-10">
 
-    <div class="footer">
-        Built by Nico Ceresa
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <span class="inline-block bg-forest-500 text-cream-50 text-xs font-semibold tracking-widest uppercase px-3 py-1 rounded-full mb-4">Super Resolution</span>
+            <h1 class="text-3xl font-bold text-forest-600 tracking-tight">FSRCNN</h1>
+            <p class="text-sm text-stone-500 mt-1">Upscale your images with a neural network trained on DIV2K</p>
+        </div>
+
+        <form id="uploadForm" method="post" action="{{ url_for('get_prediction') }}" enctype="multipart/form-data">
+
+            <!-- Drop Zone -->
+            <label for="inputfile" class="drop-zone block w-full border-2 border-dashed border-cream-200 rounded-xl p-14 text-center cursor-pointer hover:border-forest-500 hover:bg-cream-100 transition-colors mb-6 group">
+                <div id="dropIcon" class="flex flex-col items-center gap-2 pointer-events-none">
+                    <svg class="w-10 h-10 text-forest-400 group-hover:text-forest-500 transition-colors" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+                    </svg>
+                    <span id="dropText" class="text-sm text-stone-500">Click to upload or drag & drop</span>
+                    <span class="text-xs text-stone-400">JPG, PNG, BMP, WEBP — max 16 MB</span>
+                </div>
+                <input id="inputfile" type="file" name="image" accept=".jpg,.jpeg,.png,.bmp,.webp" class="hidden" required>
+            </label>
+
+            {% if error %}
+            <p class="text-red-600 text-sm text-center mb-4 bg-red-50 border border-red-200 rounded-lg px-4 py-2">{{ error }}</p>
+            {% endif %}
+
+            <!-- Scale Options -->
+            <fieldset class="mb-6">
+                <legend class="text-xs font-semibold text-stone-500 uppercase tracking-widest mb-3">Upscale Factor</legend>
+                <div class="flex gap-3">
+                    {% for scale in [2, 3, 4] %}
+                    <label class="flex-1 relative cursor-pointer">
+                        <input type="checkbox" name="scale_x{{ scale }}" value="{{ scale }}" class="peer hidden">
+                        <div class="text-center py-2 rounded-lg border-2 border-black bg-cream-100 text-sm font-medium text-black peer-checked:border-forest-500 peer-checked:bg-forest-500 peer-checked:text-cream-50 transition-colors select-none">
+                            {{ scale }}×
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <!-- Submit -->
+            <button type="submit" class="w-full bg-forest-500 hover:bg-forest-600 text-cream-50 font-semibold py-3 rounded-xl transition-colors text-sm tracking-wide">
+                Upscale Image
+            </button>
+        </form>
     </div>
 
-    <script src="//code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-    
+    <!-- Footer -->
+    <p class="mt-6 text-xs text-stone-400">
+        Built by <a href="https://nico-ceresa.com" class="text-forest-500 hover:underline">Nico Ceresa</a>
+        &mdash;
+        <a href="https://github.com/NicoCeresa/FSRCNN-2016" class="text-forest-500 hover:underline">GitHub</a>
+    </p>
+
     <script>
-        // Show loading animation when form is submitted
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            const fileInput = document.getElementById('inputfile');
-            if (fileInput.files.length > 0) {
-                document.getElementById('loadingOverlay').classList.add('show');
+        const input = document.getElementById('inputfile');
+        const dropText = document.getElementById('dropText');
+        const dropZone = document.querySelector('.drop-zone');
+        const form = document.getElementById('uploadForm');
+        const overlay = document.getElementById('loadingOverlay');
+
+        input.addEventListener('change', () => {
+            if (input.files.length > 0) {
+                dropText.textContent = input.files[0].name;
             }
         });
+
+        ['dragenter', 'dragover'].forEach(e => {
+            dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragging'); });
+        });
+        ['dragleave', 'drop'].forEach(e => {
+            dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragging'); });
+        });
+        dropZone.addEventListener('drop', ev => {
+            const file = ev.dataTransfer.files[0];
+            if (file) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                input.files = dt.files;
+                dropText.textContent = file.name;
+            }
+        });
+
+        form.addEventListener('submit', () => {
+            if (input.files.length > 0) overlay.classList.remove('hidden');
+        });
     </script>
-    
-    <!-- Github Ribbon Start-->
-    <a href="https://github.com/NicoCeresa/FSRCNN-2016" class="github-corner"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#00ff19; color:#000000; position: absolute; top: 0; border: 0; right: 0;"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
-    <!-- Github Ribbon End-->
 </body>
 </html>

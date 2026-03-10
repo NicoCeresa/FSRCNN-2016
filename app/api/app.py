@@ -9,10 +9,7 @@ import logging
 from pathlib import Path
 
 import torch
-import numpy as np
 from flask import Flask, request, render_template, send_from_directory, url_for
-from torchvision.transforms.functional import to_pil_image
-from PIL import Image
 
 from utilities import upscale, FSRCNN
 
@@ -24,9 +21,11 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16 MB upload limit
 
-UPLOAD_FOLDER = 'api/static/input/'
-OUTPUT_FOLDER = 'api/static/output/'
+BASE_DIR = Path(__file__).parent
+UPLOAD_FOLDER = str(BASE_DIR / 'static' / 'input')
+OUTPUT_FOLDER = str(BASE_DIR / 'static' / 'output')
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 logger.info(f"Using device: {device}")
@@ -34,7 +33,7 @@ logger.info(f"Using device: {device}")
 
 def load_model(scale: int, model_path: str) -> torch.nn.Module:
     model = FSRCNN(scale=scale).to(device)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
     model.eval()
     model = torch.compile(model, mode='reduce-overhead')
     logger.info(f"Loaded X{scale} model (compiled)")
@@ -64,14 +63,22 @@ def get_requested_scales(form_data) -> list[int]:
     return scales if scales else [2, 3, 4]
 
 
+ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.bmp', '.webp'}
+
+
 def process_image_upload(image_file) -> tuple[str, str, str]:
     filename_base = Path(image_file.filename).stem
+    ext = Path(image_file.filename).suffix.lower()
+
+    if ext not in ALLOWED_EXTENSIONS:
+        raise ValueError(f"Unsupported file type: {ext}. Allowed: {', '.join(ALLOWED_EXTENSIONS)}")
+
     image_location = os.path.join(UPLOAD_FOLDER, image_file.filename)
-    
+
     if not os.path.exists(image_location):
         image_file.save(image_location)
         logger.info(f"Saved image to: {image_location}")
-    
+
     return image_location, filename_base, image_file.filename
 
 
@@ -97,19 +104,20 @@ def home():
 
 @app.route('/prediction', methods=['POST'])
 def get_prediction():
-    if request.method != 'POST':
-        return render_template('index.html', image_name=None)
-    
     start_time = time.time()
     image_file = request.files.get("image")
-    
+
     if not image_file:
         logger.warning("No image file provided")
         return render_template('index.html', image_name=None)
-    
+
     logger.info(f"Processing image: {image_file.filename}")
-    
-    image_location, filename_base, original_filename = process_image_upload(image_file)
+
+    try:
+        image_location, filename_base, original_filename = process_image_upload(image_file)
+    except ValueError as e:
+        logger.warning(str(e))
+        return render_template('index.html', image_name=None, error=str(e))
     
     scales_requested = get_requested_scales(request.form)
     logger.info(f"Requested scales: {scales_requested}")
@@ -151,5 +159,6 @@ def get_health_check():
 
 
 if __name__ == '__main__':
+    debug = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
     logger.info("Starting Flask app on 0.0.0.0:8000")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=debug)

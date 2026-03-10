@@ -9,29 +9,69 @@
 - Fast super-resolution using FSRCNN (2×, 3×, 4× upscaling)
 - Web interface for easy image processing
 - Docker containerization for consistent deployment
+<<<<<<< HEAD
+=======
+- Performance optimizations with torch.compile and mixed precision
+- Trained on DIV2K dataset with L1 loss for better perceptual quality
+>>>>>>> bfed2e5 (updated readme)
 
 ## How To Run
 
-**With Docker Compose (recommended)**
+### 1. Docker Compose (recommended)
+
+Builds the image and starts the container in one step.
+
 ```bash
 cd app
 docker compose up --build
 ```
-Then navigate to `http://localhost:8000` in your browser.
 
-**With Docker (alternative)**
+Then open `http://localhost:8000` in your browser.
+
+To stop the app:
+```bash
+docker compose down
+```
+
+---
+
+### 2. Docker
+
+Build and run the image manually.
+
 ```bash
 cd app
 docker build . -t fsrcnn-app
 docker run -p 8000:8000 fsrcnn-app
 ```
 
-**Without Docker (not recommended)**
+To run in the background:
+```bash
+docker run -d -p 8000:8000 --name fsrcnn fsrcnn-app
+```
+
+To stop it:
+```bash
+docker stop fsrcnn
+```
+
+---
+
+### 3. Without Docker (not recommended)
+
+Run the Flask app directly. Requires Python 3.11 and the dependencies from [app/requirements.txt](app/requirements.txt).
+
 ```bash
 cd app
+python -m venv .venv
+source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python api/app.py
 ```
+
+Then open `http://localhost:8000` in your browser.
+
+> **Note:** `torch.compile` requires a C++ compiler (`g++`) to be installed on your system. Without it, the app will still run but model compilation will be skipped.
 
 ## Requirements
 
@@ -42,6 +82,14 @@ python api/app.py
 5. Flask>=3.0.2
 6. Pillow==10.2.0
 
+See [app/requirements.txt](app/requirements.txt) for the full pinned list used in Docker.
+
+
+## Configuration
+
+| Variable | Default | Description |
+|---|---|---|
+| `FLASK_DEBUG` | `false` | Set to `true` to enable the Werkzeug debugger (development only) |
 
 ## Results
 
@@ -66,10 +114,10 @@ All three scales (2×, 3×, 4×) are trained and available in the web applicatio
     </tr>
     <tr>
     	<td>
-    		<center><img src="./images/cottage_og.png""></center>
+    		<center><img src="./images/cottage_og.png"></center>
     	</td>
 		<td>
-    		<center><img src="./images/cottage_crop.png""></center>
+    		<center><img src="./images/cottage_crop.png"></center>
     	</td>
     	<td>
     		<center><img src="./images/cottage_lr.png"></center>
@@ -80,16 +128,16 @@ All three scales (2×, 3×, 4×) are trained and available in the web applicatio
     </tr>
     <tr>
         <td><center>Original</center></td>
+        <td><center>Original Cropped</center></td>
         <td><center>BICUBIC x3</center></td>
         <td><center>FSRCNN x3</center></td>
     </tr>
     <tr>
-    	<tr>
     	<td>
-    		<center><img src="./images/china_og.png""></center>
+    		<center><img src="./images/china_og.png"></center>
     	</td>
 		<td>
-    		<center><img src="./images/china_crop.png""></center>
+    		<center><img src="./images/china_crop.png"></center>
     	</td>
     	<td>
     		<center><img src="./images/china_lr.png"></center>
@@ -123,7 +171,7 @@ All three scales (2×, 3×, 4×) are trained and available in the web applicatio
     		<center><img src="./images/bee_LR.png"></center>
     	</td>
         <td>
-    		<center><img src="./images/bee_hr_mse.png""></center>
+    		<center><img src="./images/bee_hr_mse.png"></center>
     	</td>
     	<td>
     		<center><img src="./images/bee_hr_mae.png"></center>
@@ -145,9 +193,10 @@ https://towardsdatascience.com/deep-learning-image-enhancement-insights-on-loss-
 <img width="401" alt="Screen Shot 2024-01-29 at 12 59 33 PM" src="https://github.com/NicoCeresa/FSRCNN-2016/assets/82683503/63e082ae-cb7e-4c71-95ff-4b2cee70ce3e">
 
 ## Web App Demo
-<img src="./app/api/static/.other_ims/landing_page.png">
 
-<img src="./app/api/static/.other_ims/FSRCNN_web_app_demo.png">
+<img src="./utils/FSRCNN-landing-page.png" alt="FSRCNN landing page">
+
+<img src="./utils/FSRCNN-results-page.png" alt="FSRCNN results page">
 
 ## File Overview
 

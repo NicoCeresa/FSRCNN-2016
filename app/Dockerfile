@@ -1,9 +1,9 @@
 
 ARG PYTHON_VERSION=3.11.5
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:${PYTHON_VERSION}-slim AS base
 
-# Install C++ compiler for torch.compile optimization
-RUN apt-get update && apt-get install -y g++ && rm -rf /var/lib/apt/lists/*
+# Install C++ compiler for torch.compile optimization and curl for health checks
+RUN apt-get update && apt-get install -y g++ curl && rm -rf /var/lib/apt/lists/*
 
 # Prevents Python from writing pyc files.
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -47,5 +47,9 @@ COPY . .
 # Expose the port that the application listens on.
 EXPOSE 8000
 
+# Check that the app is healthy.
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+    CMD curl -f http://localhost:8000/prediction/health-check || exit 1
+
 # Run the application.
-CMD ["python", "api/app.py", "--host=0.0.0.0"]
+CMD ["python", "api/app.py"]
